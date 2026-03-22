@@ -1,0 +1,52 @@
+{
+  "name": "podflow",
+  "version": "0.1.0",
+  "description": "Your podcast listening, working for you. Extract guests, ideas, and insights from your Apple Podcasts library using AI.",
+  "type": "module",
+  "bin": {
+    "podflow": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --target node20 --clean",
+    "dev": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "podcast",
+    "apple-podcasts",
+    "ai",
+    "digest",
+    "guests",
+    "insights",
+    "claude",
+    "openai",
+    "ollama",
+    "cli"
+  ],
+  "author": "Chris Schofield",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisschofield/podflow"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/google": "^1.0.0",
+    "@ai-sdk/openai": "^1.0.0",
+    "ai": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.7.0"
+  }
+}
