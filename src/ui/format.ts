@@ -2,6 +2,11 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { truncate } from './theme.js';
 
+// ── Brand ────────────────────────────────────────────────────────────
+const V = chalk.hex('#a78bfa');
+const C = chalk.hex('#06b6d4');
+const DOT = chalk.dim('  \u00B7  ');
+
 // ── Logo ─────────────────────────────────────────────────────────────
 export const LOGO_LINES = [
   '    ___  ___  ___/ / _/ /__ _    __',
@@ -10,24 +15,23 @@ export const LOGO_LINES = [
   ' /_/',
 ];
 
-const DIAMOND = chalk.hex('#a78bfa')('\u25C7');
+const DIAMOND = V('\u25C7');
 const CHECK = chalk.green('\u2713');
 const CROSS = chalk.red('\u2717');
+const TILDE = chalk.yellow('~');
 
 function num(n: number): string {
   return n.toLocaleString('en-GB');
 }
 
-// ── Exports ──────────────────────────────────────────────────────────
+// ── Core ─────────────────────────────────────────────────────────────
 
 export function intro(version: string): void {
   console.log('');
-  for (let i = 0; i < LOGO_LINES.length - 1; i++) {
-    console.log(chalk.hex('#a78bfa')(LOGO_LINES[i]));
-  }
-  console.log(
-    `${chalk.hex('#a78bfa')(LOGO_LINES[LOGO_LINES.length - 1])}   ${chalk.dim(`v${version}`)}`
-  );
+  console.log(V(LOGO_LINES[0]));
+  console.log(`${V(LOGO_LINES[1])}   ${chalk.dim(`v${version}`)}`);
+  console.log(V(LOGO_LINES[2]));
+  console.log(V(LOGO_LINES[3]));
   console.log('');
 }
 
@@ -44,79 +48,88 @@ export function blank(): void {
 }
 
 export function divider(): void {
-  console.log(chalk.dim(`  ${'\u2500'.repeat(50)}`));
+  console.log(chalk.dim(`  ${'\u2500'.repeat(44)}`));
 }
 
-export function heading(text: string): void {
-  console.log(`  ${chalk.bold(text)}`);
+// ── Validation rows (matches sink's validationRow) ───────────────────
+
+export function validationRow(
+  status: 'ok' | 'fail' | 'warn',
+  label: string,
+  count: number,
+  unit: string,
+): void {
+  const icon = status === 'ok' ? CHECK : status === 'fail' ? CROSS : TILDE;
+  const countStr = num(count).padStart(6);
+  console.log(`  ${icon} ${label.padEnd(18)}${chalk.dim(countStr)} ${chalk.dim(unit)}`);
 }
 
-export function stat(label: string, value: string | number, unit?: string): void {
-  const valStr = typeof value === 'number' ? num(value) : value;
-  const unitStr = unit ? ` ${chalk.dim(unit)}` : '';
-  console.log(`  ${chalk.dim(label.padEnd(20))} ${valStr}${unitStr}`);
+// ── Episode rows (matches sink's contactTable) ───────────────────────
+
+export function episodeRow(
+  status: 'ok' | 'fail' | 'warn',
+  podcast: string,
+  title: string,
+  detail?: string,
+): void {
+  const icon = status === 'ok' ? CHECK : status === 'fail' ? CROSS : TILDE;
+  const p = truncate(podcast, 22).padEnd(22);
+  const t = truncate(title, 30).padEnd(30);
+  const d = detail ? ` ${detail}` : '';
+  console.log(`  ${icon} ${p} ${chalk.dim(t)}${d}`);
 }
 
-export function tierRow(tier: number, count: number): void {
-  const tierColour =
-    tier === 1
-      ? chalk.hex('#a78bfa')
-      : tier === 2
-        ? chalk.hex('#06b6d4')
-        : tier === 3
-          ? chalk.dim
-          : chalk.hex('#6b7280');
-  console.log(`  ${tierColour(`Tier ${tier}`)}${' '.repeat(16)}${num(count).padStart(6)} ${chalk.dim('episodes')}`);
+// ── Extraction score (matches sink's qualityScore) ───────────────────
+
+export function extractionScore(guests: number, ideas: number, episodes: number): void {
+  const perEp = episodes > 0 ? (guests + ideas) / episodes : 0;
+  const score = Math.min(Math.round(perEp * 20), 100);
+  const colour = score >= 70 ? chalk.green : score >= 40 ? chalk.yellow : chalk.red;
+  console.log(`  Extraction: ${colour(score + '%')}`);
 }
 
-export function episodeRow(podcast: string, title: string, meta?: string): void {
-  const p = truncate(podcast, 24).padEnd(24);
-  const t = truncate(title, 40);
-  const m = meta ? `  ${chalk.dim(meta)}` : '';
-  console.log(`    ${chalk.dim(p)} ${t}${m}`);
+// ── Transform summary (matches sink's transformSummary) ──────────────
+
+export function transformSummary(
+  inputCount: number,
+  stats: { guests: number; ideas: number; cost: string },
+): void {
+  const parts = [
+    V(`${num(stats.guests)} guests`),
+    chalk.green(`${num(stats.ideas)} ideas`),
+  ];
+  console.log(`  ${num(inputCount)} episodes ${chalk.dim('\u2192')} ${parts.join(chalk.dim(', '))}`);
+
+  const actions: string[] = [];
+  if (stats.cost) actions.push(stats.cost);
+  if (actions.length > 0) {
+    console.log(`  ${chalk.dim(actions.join(DOT))}`);
+  }
 }
 
-export function batchHeader(batchNum: number, totalBatches: number, count: number): void {
-  console.log('');
-  console.log(
-    `  ${chalk.hex('#a78bfa')(`Batch ${batchNum}/${totalBatches}`)} ${chalk.dim(`(${count} episodes)`)}`
-  );
-}
+// ── Batch progress ───────────────────────────────────────────────────
 
-export function batchResult(guests: number, ideas: number, tokens: { input: number; output: number }): void {
+export function batchResult(
+  guests: number,
+  ideas: number,
+  tokens: { input: number; output: number },
+): void {
   const parts = [
     `${num(guests)} guests`,
     `${num(ideas)} ideas`,
-    chalk.dim(`${num(tokens.input)} in / ${num(tokens.output)} out`),
+    chalk.dim(`${num(tokens.input)}/${num(tokens.output)} tok`),
   ];
-  console.log(`    ${CHECK} ${parts.join(chalk.dim('  \u00B7  '))}`);
+  console.log(`    ${CHECK} ${parts.join(DOT)}`);
 }
 
 export function batchError(message: string): void {
   console.log(`    ${CROSS} ${chalk.red(message)}`);
 }
 
-export function costEstimate(cost: string, provider: string): void {
-  console.log(`  ${chalk.dim('Estimated cost')}  ${chalk.hex('#a78bfa')(cost)} ${chalk.dim(`(${provider})`)}`);
-}
-
-export function runSummary(stats: {
-  processed: number;
-  guests: number;
-  ideas: number;
-  cost: string;
-}): void {
-  const parts = [
-    chalk.hex('#a78bfa')(`${num(stats.processed)} processed`),
-    chalk.hex('#06b6d4')(`${num(stats.guests)} guests`),
-    chalk.green(`${num(stats.ideas)} ideas`),
-  ];
-  console.log(`  ${parts.join(chalk.dim('  \u00B7  '))}`);
-  console.log(`  ${chalk.dim(`Cost: ${stats.cost}`)}`);
-}
+// ── Output ───────────────────────────────────────────────────────────
 
 export function outputPath(filePath: string): void {
-  console.log(`  ${chalk.dim('\u2192')} ${chalk.hex('#a78bfa')(filePath)}`);
+  console.log(`  ${chalk.dim('\u2192')} ${V(filePath)}`);
 }
 
 export function outro(elapsedMs: number): void {
@@ -141,55 +154,26 @@ export function nextSteps(steps: Array<{ cmd: string; desc: string }>): void {
   if (steps.length === 0) return;
   console.log(chalk.dim('  Next steps'));
   for (const s of steps) {
-    console.log(`    ${chalk.hex('#a78bfa')(s.cmd.padEnd(42))} ${chalk.dim(s.desc)}`);
+    console.log(`    ${V(s.cmd.padEnd(36))} ${chalk.dim(s.desc)}`);
   }
 }
 
-export function providerInfo(provider: string, model: string): void {
-  console.log(`  ${chalk.dim('Provider')}  ${provider} ${chalk.dim(`(${model})`)}`);
-}
-
-export function modeInfo(mode: string): void {
-  const colour =
-    mode === 'DRY RUN' ? chalk.yellow : mode === 'BACKFILL' ? chalk.hex('#a78bfa') : chalk.green;
-  console.log(`  ${chalk.dim('Mode')}      ${colour(mode)}`);
-}
-
-export function cacheInfo(lastRun: string, processed: number, guests: number, ideas: number): void {
-  console.log(
-    `  ${chalk.dim('Cache')}     ${num(processed)} episodes ${chalk.dim('\u00B7')} ${num(guests)} guests ${chalk.dim('\u00B7')} ${num(ideas)} ideas`
-  );
-  console.log(`  ${chalk.dim('Last run')}  ${lastRun}`);
+export function stat(label: string, value: string | number, unit?: string): void {
+  const valStr = typeof value === 'number' ? num(value) : value;
+  const unitStr = unit ? ` ${chalk.dim(unit)}` : '';
+  console.log(`  ${chalk.dim(label.padEnd(18))}${valStr}${unitStr}`);
 }
 
 /**
  * Spinner that sits inside the rail.
- * Call .succeed(text) to replace with a diamond checkpoint.
  */
 export function createSpinner(text: string) {
-  const spinner = ora({
-    text,
-    prefixText: ' ',
-    spinner: 'dots',
-  });
+  const spinner = ora({ text, prefixText: ' ', spinner: 'dots' });
   return {
-    start() {
-      spinner.start();
-      return this;
-    },
-    update(text: string) {
-      spinner.text = text;
-    },
-    succeed(msg: string) {
-      spinner.stop();
-      stepComplete(msg);
-    },
-    fail(msg: string) {
-      spinner.stop();
-      error(msg);
-    },
-    stop() {
-      spinner.stop();
-    },
+    start() { spinner.start(); return this; },
+    update(t: string) { spinner.text = t; },
+    succeed(msg: string) { spinner.stop(); stepComplete(msg); },
+    fail(msg: string) { spinner.stop(); error(msg); },
+    stop() { spinner.stop(); },
   };
 }
