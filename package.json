@@ -32,7 +32,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chrisschofield/podflow"
+    "url": "https://github.com/totalaudiopromo/podflow"
   },
   "engines": {
     "node": ">=20"
