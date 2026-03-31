@@ -1,4 +1,4 @@
-import type { DetailedEpisode, PodflowConfig, PodcastTierConfig } from '../types.js';
+import type { DetailedEpisode, PodflowConfig } from '../types.js';
 import { getPodcastConfig, getTier } from './index.js';
 
 function shouldSkip(config: PodflowConfig, episode: DetailedEpisode): boolean {

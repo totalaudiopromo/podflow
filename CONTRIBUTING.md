@@ -5,7 +5,7 @@ Thanks for your interest in contributing. This guide covers what you need to get
 ## Dev Setup
 
 ```bash
-git clone https://github.com/chrisschofield/podflow.git
+git clone https://github.com/totalaudiopromo/podflow.git
 cd podflow
 pnpm install
 pnpm build
