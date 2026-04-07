@@ -35,6 +35,10 @@
     "type": "git",
     "url": "https://github.com/totalaudiopromo/podflow"
   },
+  "homepage": "https://github.com/totalaudiopromo/podflow#readme",
+  "bugs": {
+    "url": "https://github.com/totalaudiopromo/podflow/issues"
+  },
   "engines": {
     "node": ">=20"
   },
