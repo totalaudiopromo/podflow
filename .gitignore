@@ -3,3 +3,7 @@ dist/
 *.tsbuildinfo
 podflow-digest.md
 test-digest.md
+
+.env
+.env.local
+.env.*.local
