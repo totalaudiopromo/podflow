@@ -7,3 +7,6 @@ test-digest.md
 .env
 .env.local
 .env.*.local
+
+# Generated digest outputs
+podflow-digest.*.md
