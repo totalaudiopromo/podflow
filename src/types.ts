@@ -124,4 +124,5 @@ export interface PodflowConfig {
   provider: 'anthropic' | 'openai' | 'google' | 'ollama';
   model: string;
   outputPath: string;
+  feeds?: string[];
 }

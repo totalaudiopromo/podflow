@@ -35,7 +35,6 @@
     "type": "git",
     "url": "https://github.com/totalaudiopromo/podflow"
   },
-  "homepage": "https://github.com/totalaudiopromo/podflow#readme",
   "bugs": {
     "url": "https://github.com/totalaudiopromo/podflow/issues"
   },
@@ -49,7 +48,8 @@
     "ai": "^4.0.0",
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
-    "ora": "^9.3.0"
+    "ora": "^9.3.0",
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

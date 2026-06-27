@@ -41,6 +41,7 @@ const DEFAULT_CONFIG: PodflowConfig = {
   provider: 'anthropic',
   model: 'claude-haiku-4-5-20251001',
   outputPath: './podflow-digest.md',
+  feeds: [],
 };
 
 export function configExists(): boolean {

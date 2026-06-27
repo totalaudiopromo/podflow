@@ -2,7 +2,8 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { loadConfig, initConfig, configExists, getTier } from './config/index.js';
+import { loadConfig, initConfig, configExists, getTier, saveConfig } from './config/index.js';
+import type { DetailedEpisode } from './types.js';
 import { isAvailable, queryCompletedEpisodes } from './db/apple-podcasts.js';
 import { prioritiseEpisodes } from './config/prioritiser.js';
 import { extractBatch, estimateCost } from './ai/extractor.js';
@@ -58,6 +59,7 @@ function registerDigest(program: Command): void {
     .option('--output <path>', 'Output file path')
     .option('--recent <days>', 'Days of history to scan', '365')
     .option('--verbose', 'Show episode details')
+    .option('--rss <url>', 'Process a specific RSS feed URL')
     .option('-q, --quiet', 'Suppress output except errors')
     .action(async (opts) => {
       const startTime = Date.now();
@@ -86,21 +88,39 @@ function registerDigest(program: Command): void {
         ui.blank();
       }
 
-      // ── DB check ──
-      if (!isAvailable()) {
-        ui.error('Apple Podcasts database not found');
-        ui.hint('Sync Library must be enabled in the Podcasts app');
-        process.exit(1);
-      }
-
       // ── Load cache ──
       let cache = loadCache();
 
       // ── Query ──
-      const spinner = ui.createSpinner('Reading Apple Podcasts...');
-      spinner.start();
-      const allEpisodes = queryCompletedEpisodes(recentDays);
-      spinner.succeed(`${allEpisodes.length} listened episodes`);
+      let allEpisodes: DetailedEpisode[] = [];
+      const rssUrl = opts.rss;
+
+      if (rssUrl) {
+        const spinner = ui.createSpinner(`Reading RSS feed: ${rssUrl}...`);
+        spinner.start();
+        const { fetchRssEpisodes } = await import('./db/rss.js');
+        allEpisodes = await fetchRssEpisodes(rssUrl, 20);
+        spinner.succeed(`${allEpisodes.length} RSS episodes found`);
+      } else if (config.feeds && config.feeds.length > 0) {
+        const spinner = ui.createSpinner(`Reading ${config.feeds.length} RSS feeds...`);
+        spinner.start();
+        const { fetchRssEpisodes } = await import('./db/rss.js');
+        for (const feed of config.feeds) {
+          const eps = await fetchRssEpisodes(feed, 10);
+          allEpisodes.push(...eps);
+        }
+        spinner.succeed(`${allEpisodes.length} RSS episodes found`);
+      } else {
+        if (!isAvailable()) {
+          ui.error('Apple Podcasts database not found, and no RSS feeds configured.');
+          ui.hint('Sync Library must be enabled in the Podcasts app or configure RSS feeds in config.json.');
+          process.exit(1);
+        }
+        const spinner = ui.createSpinner('Reading Apple Podcasts...');
+        spinner.start();
+        allEpisodes = queryCompletedEpisodes(recentDays);
+        spinner.succeed(`${allEpisodes.length} listened episodes`);
+      }
 
       // ── Prioritise ──
       const prioritised = prioritiseEpisodes(config, allEpisodes, {
@@ -396,6 +416,56 @@ function registerStats(program: Command): void {
     });
 }
 
+// ── ui ─────────────────────────────────────────────────────────────
+
+function registerUi(program: Command): void {
+  program
+    .command('ui')
+    .description('Start interactive local dashboard')
+    .option('-p, --port <port>', 'Port to run dashboard server on', '3010')
+    .action(async (opts) => {
+      const port = parseInt(opts.port, 10);
+      const { startServer } = await import('./ui/server.js');
+      startServer(port);
+    });
+}
+
+// ── import ─────────────────────────────────────────────────────────
+
+function registerImport(program: Command): void {
+  program
+    .command('import <path>')
+    .description('Import podcast RSS feeds from an OPML file')
+    .action(async (filePath) => {
+      ui.intro(VERSION);
+      if (!configExists()) {
+        ui.error('No config found. Run `podflow init` first.');
+        process.exit(1);
+      }
+      const { parseOpmlFeeds } = await import('./db/rss.js');
+      try {
+        const urls = parseOpmlFeeds(filePath);
+        if (urls.length === 0) {
+          ui.warn('No feeds found in OPML file.');
+          return;
+        }
+        const config = loadConfig();
+        if (!config.feeds) config.feeds = [];
+        let added = 0;
+        for (const url of urls) {
+          if (!config.feeds.includes(url)) {
+            config.feeds.push(url);
+            added++;
+          }
+        }
+        saveConfig(config);
+        ui.stepComplete(`Imported ${added} new RSS feeds (total: ${config.feeds.length})`);
+      } catch (err) {
+        ui.error(`Failed to parse OPML: ${(err as Error).message}`);
+      }
+    });
+}
+
 // ── main ───────────────────────────────────────────────────────────
 
 const program = new Command()
@@ -407,5 +477,7 @@ registerInit(program);
 registerDigest(program);
 registerSubs(program);
 registerStats(program);
+registerUi(program);
+registerImport(program);
 
 program.parse();
