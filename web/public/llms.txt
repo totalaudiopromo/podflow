@@ -1,0 +1,38 @@
+# Podflow - AI-Powered Podcast Intelligence
+
+Podflow is a developer-first tool and marketing assistant designed to extract guest profiles, core ideas, and key takeaways from podcast libraries using advanced AI (Gemini, Claude, OpenAI). It operates as both a local open-source CLI engine and a cloud-based SaaS platform.
+
+## Key Features
+- **Apple Podcasts Local Sync:** Parses your macOS local SQLite podcast library database to sync episodes instantly with zero uploads.
+- **Speaker Diarization:** Distinguishes between hosts and guests to attribute claims and key insights.
+- **Key Takeaways & Summaries:** Uses state-of-the-art LLMs to generate structured takeaways, benchmarks, and action items.
+- **PR Mention Monitor (SaaS):** Tracks mentions of keywords across thousands of public podcast audio feeds.
+- **Ecosystem Integration:** Connects with **Total Audio Promo** (TAP) for PR outreach, **Newsjack.cc** for trending hook analysis, and **SpotCheck.cc** for Spotify playlist verification.
+
+## Local CLI Usage
+Install the CLI utility globally using NPM:
+```bash
+npm install -g podflow
+```
+
+To run a sync and generate markdown summaries for your Apple Podcasts:
+```bash
+podflow sync --local
+```
+
+### Options
+- `--local`: Run transcription and analysis using local Whisper models and local Ollama configurations (100% private, $0 API costs).
+- `--api-key <key>`: Supply a custom developer API key (Anthropic Claude, Google Gemini, or OpenAI GPT) for higher reasoning accuracy.
+- `--output <dir>`: Custom output directory for the generated Markdown digest files.
+
+## Pricing & Tiers
+- **Local CLI Core ($0/forever):** Standard macOS library sync, local markdown output, bring-your-own developer API keys.
+- **Pro Listener ($15/month):** Automated cloud RSS monitoring, semantic search across catalogs, weekly newsletters, hosted compute.
+- **PR & Creator Suite ($79/month):** Mention alerts for 10 keywords, automated guest booking email extraction, native Total Audio Promo export.
+
+## References & Main Pages
+- [Homepage](https://podflow.cc/) - Product overview and SaaS trial.
+- [Best AI Podcast Summarizers](https://podflow.cc/best-tools) - Review of the top summarizer tools of 2026.
+- [How it Works](https://podflow.cc/how-it-works) - Technical review of speech diarization, Whisper ASR, semantic chunking, and vector indexing.
+- [Pricing Comparison](https://podflow.cc/pricing-compare) - Comprehensive comparison of plans and compute costs (BYOK vs. Hosted).
+- [Benchmark Study](https://podflow.cc/proof) - Research paper detailing local vs. cloud execution speed, API cost reductions (94% savings), and model accuracy ratios.

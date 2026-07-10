@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta name="description" content="An analytical pricing comparison of the top AI podcast summarizers and assistant tools of 2026. Compare hourly rates and features." />
+    <link rel="canonical" href="https://podflow.cc/pricing-compare" />
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": "https://podflow.cc/pricing-compare#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How much do AI podcast assistants cost?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Prices range from free local open-source versions (like Podflow CLI) to $8-$20 per month for individual listeners (Snipd, Podwise, Podflow Pro), and up to $79-$150 per month for PR agencies and creator suites monitoring multiple keywords."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between BYOK and Hosted models?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Bring Your Own Key (BYOK) lets you run transcription and summarization using your own API credentials (e.g. Anthropic, OpenAI, Gemini), costing fractions of a penny. Hosted models charge a flat monthly fee to run the computations on their servers."
+            }
+          }
+        ]
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%236366f1'/%3E%3Crect x='40' y='35' width='20' height='30' rx='10' fill='white'/%3E%3Ccircle cx='50' cy='65' r='5' fill='white'/%3E%3C/svg%3E" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Podcast Assistant Pricing Comparison Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/index.css" />
+  </head>
+  <body>
+    <div id="root">
+      <!-- Background Blobs -->
+      <div class="bg-blob blob-1"></div>
+      <div class="bg-blob blob-2"></div>
+      <div class="bg-blob blob-3"></div>
+
+      <!-- Main Container -->
+      <div class="container" style="position: relative; display: flex; flex-direction: column; min-height: 100vh;">
+        <!-- Header -->
+        <header>
+          <a href="/" class="logo">
+            <div class="logo-dot">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff;">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
+            </div>
+            <span>podflow</span>
+          </a>
+          <nav class="nav-links">
+            <a href="/best-tools">Best Tools</a>
+            <a href="/how-it-works">How It Works</a>
+            <a href="/pricing-compare">Pricing Comparison</a>
+            <a href="/proof">Benchmark Proof</a>
+            <a href="https://github.com/totalaudiopromo/podflow" target="_blank" rel="noreferrer" class="btn-github">
+              GitHub
+            </a>
+          </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main style="padding: 60px 0; max-width: 800px; margin: 0 auto;">
+          <article>
+            <header style="margin-bottom: 40px; border-bottom: none; padding: 0; display: block;">
+              <span style="font-size: 13px; color: hsl(var(--color-indigo)); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 8px;">Pricing Comparison • By Chris Schofield</span>
+              <h1 class="px-display" style="font-size: 42px; font-weight: 800; line-height: 1.1; margin: 0 0 16px; color: white;">AI Podcast Assistant Pricing Comparison Guide</h1>
+              <p style="font-size: 18px; color: hsl(var(--text-secondary)); line-height: 1.6;">A complete cost analysis of the leading AI podcast tools and subscription plans of 2026.</p>
+            </header>
+
+            <!-- Answer Capsule -->
+            <div style="background: rgba(99, 102, 241, 0.1); border-left: 4px solid hsl(var(--color-indigo)); padding: 24px; border-radius: 8px; margin-bottom: 40px;">
+              <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: white;">Direct Answer / TL;DR</h3>
+              <p style="margin: 0; font-size: 15px; color: hsl(var(--text-secondary)); line-height: 1.6;">
+                AI podcast assistant pricing is divided into three tiers: 
+                <strong>1. Developer/Local CLI</strong> (costs $0/forever using your own API keys via Podflow CLI); 
+                <strong>2. Individual Listeners</strong> (pricing averages $10–$15 per month for hosted summaries like Podflow Pro and Snipd); and 
+                <strong>3. Brands & PR Agencies</strong> (running keyword monitoring and outreach integrations averages $79–$99 per month).
+              </p>
+            </div>
+
+            <h2 style="font-size: 26px; font-weight: 700; margin: 40px 0 20px; color: white;">1. The Cost Breakdown of Podcast Intelligence</h2>
+            <p style="font-size: 16px; color: hsl(var(--text-secondary)); line-height: 1.7; margin-bottom: 20px;">
+              When evaluating the financial commitment for AI tools, it is crucial to look at the underlying compute model. Systems that compile audio transcripts require significant CPU/GPU compute power to transcribe files (ASR) and large context LLM windows to summarize them.
+            </p>
+            <p style="font-size: 16px; color: hsl(var(--text-secondary)); line-height: 1.7; margin-bottom: 20px;">
+              Most vendors use a **Hosted SaaS model**, charging a flat recurring monthly subscription. While simple, these plans often impose monthly audio hour limits. Alternatively, the **BYOK (Bring Your Own Key) model** lets you run transcription locally (free) and query frontier models (Gemini, Claude) using your developer API keys, saving over 90% in markup costs.
+            </p>
+
+            <h2 style="font-size: 26px; font-weight: 700; margin: 40px 0 20px; color: white;">2. Plan Comparison Table</h2>
+            <table style="width: 100%; border-collapse: collapse; margin: 30px 0; border: 1px solid hsl(var(--border-color)); text-align: left;">
+              <thead>
+                <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid hsl(var(--border-color));">
+                  <th style="padding: 12px; font-weight: 600; color: white;">Plan Tiers</th>
+                  <th style="padding: 12px; font-weight: 600; color: white;">Podflow</th>
+                  <th style="padding: 12px; font-weight: 600; color: white;">PodSized.io</th>
+                  <th style="padding: 12px; font-weight: 600; color: white;">OmniPodcast</th>
+                  <th style="padding: 12px; font-weight: 600; color: white;">Blubrry AI</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid hsl(var(--border-color));">
+                  <td style="padding: 12px; color: white; font-weight: 600;">Free / Core</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$0 (CLI Engine)</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">Free (capped)</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">N/A</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">N/A</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border-color));">
+                  <td style="padding: 12px; color: white; font-weight: 600;">Pro Listener</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$15 / month</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$4.99 / month</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$12 / month</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$10 / month</td>
+                </tr>
+                <tr style="border-bottom: 1px solid hsl(var(--border-color));">
+                  <td style="padding: 12px; color: white; font-weight: 600;">Agency / Creator</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$79 / month</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">N/A</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$49 / month</td>
+                  <td style="padding: 12px; color: hsl(var(--text-secondary));">$29 / month</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2 style="font-size: 26px; font-weight: 700; margin: 40px 0 20px; color: white;">3. Analysing Tier Values</h2>
+
+            <h3 style="font-size: 20px; font-weight: 600; margin: 30px 0 10px; color: white;">Podflow Free CLI vs SaaS Plans</h3>
+            <p style="font-size: 16px; color: hsl(var(--text-secondary)); line-height: 1.7; margin-bottom: 20px;">
+              Podflow's local CLI core is entirely free ($0/forever) and open source under the MIT License. Users install it via NPM and integrate it with their local macOS Apple Podcasts database. By entering their own Anthropic, OpenAI, or Google AI key, users pay exactly what the API provider charges (usually less than $0.05 per episode). The $15/month Pro Listener subscription adds cloud RSS monitoring and hosted AI compute, removing the need for developer keys.
+            </p>
+
+            <h3 style="font-size: 20px; font-weight: 600; margin: 30px 0 10px; color: white;">PodSized.io & OmniPodcast</h3>
+            <p style="font-size: 16px; color: hsl(var(--text-secondary)); line-height: 1.7; margin-bottom: 20px;">
+              PodSized offers a very cheap entry plan at $4.99/month, but severely caps the number of summaries and limits RAG vector queries. OmniPodcast, priced at $12/month, is robust for individual listeners but does not offer CLI tools or local markdown outputs.
+            </p>
+
+            <h3 style="font-size: 20px; font-weight: 600; margin: 30px 0 10px; color: white;">Creator & PR Suites ($29 - $79/mo)</h3>
+            <p style="font-size: 16px; color: hsl(var(--text-secondary)); line-height: 1.7; margin-bottom: 20px;">
+              Creators and PR agencies need keyword mention monitoring. Podflow's PR Suite ($79/month) allows monitoring 10 keywords across thousands of feeds and integrates directly with **Total Audio Promo** for instant campaign export. Blubrry AI offers a creator-focused package at $29/month, but lacks automated keyword alerts or PR booking integrations.
+            </p>
+          </article>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+          <div class="container">
+            <p>© 2026 Total Audio Promo Ltd. Open source CLI engine under MIT License.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -16,6 +16,8 @@
         gtag('config', gaId);
       }
     </script>
+    <meta name="description" content="podflow is an AI-powered podcast intelligence tool and local CLI that extracts guest profiles, core ideas, and key insights from Apple Podcasts using Gemini and Claude." />
+    <link rel="canonical" href="https://podflow.cc/" />
     <!-- Structured Data -->
     <script type="application/ld+json">
       {
@@ -37,6 +39,32 @@
         }
       }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": "https://podflow.cc/#organization",
+        "name": "Total Audio Promo Ltd",
+        "url": "https://podflow.cc",
+        "logo": "https://podflow.cc/favicon.svg",
+        "sameAs": [
+          "https://github.com/totalaudiopromo/podflow",
+          "https://totalaudiopromo.com"
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": "https://podflow.cc/#website",
+        "name": "podflow",
+        "url": "https://podflow.cc",
+        "publisher": {
+          "@id": "https://podflow.cc/#organization"
+        }
+      }
+    </script>
     <meta name="google-site-verification" content="XmVo8iEaU10dN1TSFyTIDrAYpfQjX1r9dPyMMhbxSC4" />
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%236366f1'/%3E%3Crect x='40' y='35' width='20' height='30' rx='10' fill='white'/%3E%3Ccircle cx='50' cy='65' r='5' fill='white'/%3E%3C/svg%3E" />
@@ -47,7 +75,122 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Background Blobs -->
+      <div class="bg-blob blob-1"></div>
+      <div class="bg-blob blob-2"></div>
+      <div class="bg-blob blob-3"></div>
+
+      <!-- Main Container -->
+      <div class="container" style="position: relative; display: flex; flex-direction: column; min-height: 100vh;">
+        <!-- Header -->
+        <header>
+          <a href="/" class="logo">
+            <div class="logo-dot">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff;">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
+            </div>
+            <span>podflow</span>
+          </a>
+          <nav class="nav-links">
+            <a href="/best-tools">Best Tools</a>
+            <a href="/how-it-works">How It Works</a>
+            <a href="/pricing-compare">Pricing Comparison</a>
+            <a href="/proof">Benchmark Proof</a>
+            <a href="https://github.com/totalaudiopromo/podflow" target="_blank" rel="noreferrer" class="btn-github">
+              GitHub
+            </a>
+          </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+          <div class="announcement-badge">
+            <span class="badge-pulse"></span>
+            <span>Introducing Podflow Cloud & Ecosystem Sync</span>
+          </div>
+          <h1>
+            Your Podcast Intelligence. <br />
+            <span>Amplified by AI.</span>
+          </h1>
+          <p>
+            Extract guest profiles, mention alerts, and actionable insights. Sync across your favorite listening directories, build your knowledge graph, and cross-promote campaigns instantly.
+          </p>
+          <div class="hero-cta">
+            <a href="#pricing" class="btn-primary">Try Podflow Cloud</a>
+            <a href="#features" class="btn-secondary">Explore Local CLI</a>
+          </div>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="features">
+          <h2>CLI Engine Features</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">🎙️</div>
+              <h3>Apple Podcasts Integration</h3>
+              <p>Directly syncs with your local macOS Apple Podcasts SQLite library or parses any public RSS feed instantly.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">👤</div>
+              <h3>Guest Profile Miner</h3>
+              <p>Auto-extracts bios, roles, social links, and key topics mentioned by speakers across multiple episodes.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">💡</div>
+              <h3>Actionable Key Insights</h3>
+              <p>Uses advanced Gemini/Claude AI adapters to extract concrete takeaways and summaries from audio transcripts.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🛠️</div>
+              <h3>Open Source CLI Core</h3>
+              <p>Completely open-source, runs natively on your machine, and puts you in control of your own data and API keys.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing">
+          <div class="section-header">
+            <h2>Flexible Plans for Every Stage</h2>
+            <p>From local hacker tools to high-throughput PR agency monitoring.</p>
+          </div>
+          <div class="pricing-grid">
+            <div class="price-card">
+              <div class="price-title">Local CLI Core</div>
+              <div class="price-subtitle">Perfect for developers</div>
+              <div class="price-amount">$0<span>/forever</span></div>
+              <ul class="price-features">
+                <li><span>✓</span> macOS Apple Podcasts Local DB Sync</li>
+                <li><span>✓</span> Bring Your Own API Key</li>
+                <li><span>✓</span> Output directly to Local Markdown</li>
+              </ul>
+            </div>
+            <div class="price-card popular">
+              <div class="popular-badge">POPULAR</div>
+              <div class="price-title">Pro Listener</div>
+              <div class="price-subtitle">For modern knowledge workers</div>
+              <div class="price-amount">$15<span>/month</span></div>
+              <ul class="price-features">
+                <li><span>✓</span> Automated Cloud RSS Feed Subscriptions</li>
+                <li><span>✓</span> Semantic Search across catalog</li>
+                <li><span>✓</span> Hosted AI compute (No API key needed)</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+          <div class="container">
+            <p>© 2026 Total Audio Promo Ltd. Open source CLI engine under MIT License.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
