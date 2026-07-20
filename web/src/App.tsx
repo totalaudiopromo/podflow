@@ -37,22 +37,22 @@ interface DemoEpisode {
 
 export function App() {
   const [digestTab, setDigestTab] = useState<'insights' | 'guest'>('insights');
-  const [premiumTab, setPremiumTab] = useState<'wrapped' | 'mentions' | 'debates'>('wrapped');
 
+  // Real output from a real run — extracted by podflow from the Dwarkesh Podcast.
   const demoEpisode: DemoEpisode = {
-    title: "Navigating AI & Open Source in 2026",
-    podcast: "Tech Frontiers Podcast",
-    duration: "42 mins",
+    title: "Dylan Patel — Deep dive on the 3 big bottlenecks to scaling AI compute",
+    podcast: "Dwarkesh Podcast",
+    duration: "2 hrs",
     guest: {
-      name: "Dr. Aris Vance",
-      role: "Lead Architect at CoreOS",
-      topics: ["Decentralized Models", "Safety Alignments", "GPU Orchestration"],
-      bio: "Dr. Vance is a veteran AI research scientist specializing in decentralized model fine-tuning and resource-constrained edge computing architectures."
+      name: "Dylan Patel",
+      role: "Founder and CEO, SemiAnalysis",
+      topics: ["Semiconductor supply chain", "AI compute", "Hardware economics"],
+      bio: "Deep expertise in semiconductor supply chain, AI compute bottlenecks, and hardware economics — critical for understanding infrastructure constraints on AI scaling."
     },
     insights: [
-      "Edge intelligence will grow 400% as local model size decreases below 3B parameters with similar logic capacity.",
-      "Custom optimization pipelines like DeepSpeed and llama.cpp are democratizing model execution for everyday users.",
-      "The 'Bring Your Own Key' model is shifting the cost of API computation from developers to power users."
+      "H100 GPUs are worth more today than three years ago despite Moore's Law.",
+      "NVIDIA secured TSMC allocation early while Google is getting squeezed.",
+      "Allocation strategy matters more than chip performance."
     ]
   };
 
@@ -140,73 +140,52 @@ export function App() {
     </footer>
   );
 
-  // Pricing Table Config
+  // Pricing — one honest tier. The CLI is the product; cloud is an idea, not a promise.
   const pricingTiers = [
     {
-      name: "Local CLI Core",
+      name: "Local CLI",
       price: "$0",
       period: "/forever",
-      description: "Perfect for developers and hackers",
+      description: "Free and open source. The whole product, today.",
+      highlighted: true,
+      badge: "MIT LICENCE",
       features: [
-        "macOS Apple Podcasts Local DB Sync",
-        "Bring Your Own API Key (OpenAI/Anthropic/Gemini)",
-        "Output directly to Local Markdown",
-        "Open source MIT License"
+        "Apple Podcasts library sync (macOS) or any public RSS feed",
+        "Guest, idea, and insight extraction with your own API key (Anthropic/OpenAI/Google/Ollama)",
+        "Incremental markdown digests — interrupted runs resume",
+        "MCP server for agents — six tools, one line of config",
+        "Your data stays on your machine"
       ],
       cta: (
         <a
           href="https://github.com/totalaudiopromo/podflow"
           target="_blank"
           rel="noreferrer"
-          className="block w-full py-3 px-6 text-center text-sm font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors duration-200"
+          className="block w-full py-3 px-6 text-center text-sm font-bold text-slate-950 bg-white rounded-xl hover:bg-slate-100 transition-colors duration-200 shadow-lg"
         >
-          Install via NPM
+          npm install -g podflow
         </a>
       )
     },
     {
-      name: "Pro Listener",
-      price: "$15",
-      period: "/month",
-      description: "For modern knowledge workers",
-      highlighted: true,
-      badge: "POPULAR",
+      name: "Cloud",
+      price: "—",
+      period: "",
+      description: "Being explored, not built. No hosted tier exists yet.",
       features: [
-        "Automated Cloud RSS Feed Subscriptions",
-        "Semantic Search across your entire catalog",
-        "Weekly Personal Newsletter & Summaries",
-        "Shareable Knowledge wrapped profiles",
-        "Hosted AI compute (No API key needed)"
+        "Hosted feed monitoring and briefings are on the ideas list",
+        "If that would be useful to you, say so on GitHub",
+        "Until then: the CLI is local-first and free"
       ],
       cta: (
-        <button
-          onClick={() => alert('SaaS registration coming soon! Under development.')}
-          className="w-full py-3 px-6 text-sm font-bold text-slate-950 bg-white rounded-xl hover:bg-slate-100 transition-colors duration-200 shadow-lg"
+        <a
+          href="https://github.com/totalaudiopromo/podflow/issues"
+          target="_blank"
+          rel="noreferrer"
+          className="block w-full py-3 px-6 text-center text-sm font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors duration-200"
         >
-          Get Pro Now
-        </button>
-      )
-    },
-    {
-      name: "PR & Creator Suite",
-      price: "$79",
-      period: "/month",
-      description: "For brands, artists, & agencies",
-      features: [
-        "Daily/Weekly summary briefings for all feeds",
-        "Monitor 10 keywords for real-time mentions",
-        "Generate video clips with captions in one-click",
-        "Automated Guest Booker Email extractor",
-        "Native Total Audio Promo Campaign export",
-        "API Access & CSV Exports"
-      ],
-      cta: (
-        <button
-          onClick={() => alert('SaaS registration coming soon! Under development.')}
-          className="w-full py-3 px-6 text-sm font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors duration-200"
-        >
-          Start Free Trial
-        </button>
+          Tell us what you'd pay for
+        </a>
       )
     }
   ];
@@ -226,22 +205,22 @@ export function App() {
             <AnimatedSection className="text-center max-w-3xl mx-auto space-y-6 pt-12">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-500/10 border border-brand-500/20 rounded-full text-xs font-semibold tracking-wide text-brand-400">
                 <span className="badge-pulse"></span>
-                <span>Introducing Podflow Cloud & Ecosystem Sync</span>
+                <span>Open-source CLI · v0.2.0 · now with agent tools (MCP)</span>
               </div>
               <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-none">
-                Your Podcast Intelligence. <br />
-                <span className="gradient-text">Amplified by AI.</span>
+                Your podcast listening, <br />
+                <span className="gradient-text">working for you.</span>
               </h1>
               <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                Extract guest profiles, mention alerts, and actionable insights. Sync across your favorite listening directories, build your knowledge graph, and cross-promote campaigns instantly.
+                A local-first CLI that reads your Apple Podcasts library (or any RSS feed) and extracts guests, ideas, and insights with your own AI key. Runs on your machine. Costs pennies. Now queryable by your agents over MCP.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                <GradientButton href="#pricing">Try Podflow Cloud</GradientButton>
+                <GradientButton href="#pricing">Install the CLI</GradientButton>
                 <a
                   href="#features"
                   className="px-6 py-3 bg-white/5 border border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/30 transition-all duration-200"
                 >
-                  Explore Local CLI
+                  See it in action
                 </a>
               </div>
             </AnimatedSection>
@@ -344,160 +323,46 @@ export function App() {
               </AnimatedSection>
             </section>
 
-            {/* Premium SaaS Features Showcase */}
-            <section id="premium">
+            {/* Agents (MCP) */}
+            <section id="agents">
               <AnimatedSection className="space-y-12 py-12">
               <div className="text-center space-y-4 max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Insanely Good SaaS Features</h2>
-                <p className="text-slate-400 text-lg">Go beyond single file summaries. Harness the full power of podcast audio monitoring and semantic search.</p>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Your agents can use it too</h2>
+                <p className="text-slate-400 text-lg">podflow ships an MCP server. Agents are deaf to audio — this gives them ears: query what was said, by whom, and why it matters, straight from your podcast library.</p>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-3 bg-white/5 p-1 rounded-2xl w-fit mx-auto">
-                <button
-                  onClick={() => setPremiumTab('wrapped')}
-                  className={`px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    premiumTab === 'wrapped'
-                      ? 'bg-brand-500 text-white shadow-glow'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  🧠 Knowledge Wrapped
-                </button>
-                <button
-                  onClick={() => setPremiumTab('mentions')}
-                  className={`px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    premiumTab === 'mentions'
-                      ? 'bg-brand-500 text-white shadow-glow'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  🔔 PR Mention Monitor
-                </button>
-                <button
-                  onClick={() => setPremiumTab('debates')}
-                  className={`px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    premiumTab === 'debates'
-                      ? 'bg-brand-500 text-white shadow-glow'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  💬 AI Synthesized Debates
-                </button>
-              </div>
 
               <GlassCard className="max-w-4xl mx-auto p-6 md:p-10 border border-white/10">
-                {premiumTab === 'wrapped' && (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10">
-                    <div className="space-y-4">
-                      <h3 className="text-2xl font-bold text-white">Your Personalized Knowledge Profile</h3>
-                      <p className="text-slate-300 leading-relaxed">
-                        As you consume podcast episodes, Podflow extracts concepts and plots your cognitive roadmap. Share beautiful, custom status cards highlighting what you've learned.
-                      </p>
-                    </div>
-
-                    <div className="w-full max-w-md mx-auto bg-gradient-to-br from-violet-600 to-pink-600 rounded-2xl p-6 shadow-xl relative overflow-hidden text-white border border-white/10">
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.15),transparent)] pointer-events-none" />
-                      <div className="flex justify-between items-center border-b border-white/20 pb-3 mb-6">
-                        <span className="text-xs font-bold uppercase tracking-widest">podflow wrapped</span>
-                        <span className="text-xs opacity-80">July 2026</span>
-                      </div>
-                      <div className="space-y-2 mb-6">
-                        <span className="block text-4xl font-extrabold tracking-tight">98th</span>
-                        <span className="text-sm opacity-90 block">Percentile Learner in SaaS PLG & AI Agent Architectures</span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 bg-black/20 p-4 rounded-xl border border-white/10 mb-6">
-                        <div className="text-center">
-                          <span className="block text-xl font-bold">34</span>
-                          <span className="text-[10px] opacity-80 block mt-1">Concepts</span>
-                        </div>
-                        <div className="text-center border-x border-white/10">
-                          <span className="block text-xl font-bold">12</span>
-                          <span className="text-[10px] opacity-80 block mt-1">Hosts</span>
-                        </div>
-                        <div className="text-center">
-                          <span className="block text-xl font-bold">2.8k</span>
-                          <span className="text-[10px] opacity-80 block mt-1">Minutes</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <h6 className="text-[10px] font-bold uppercase tracking-wider opacity-85">Top Virtual Mentors:</h6>
-                        <div className="flex flex-col gap-1 text-xs font-semibold">
-                          <span>🎙️ Dr. Aris Vance</span>
-                          <span>🎙️ Paul Graham</span>
-                          <span>🎙️ Lenny Rachitsky</span>
-                        </div>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                  <div className="space-y-5">
+                    <h3 className="text-2xl font-bold text-white">Six tools, one line of config</h3>
+                    <p className="text-slate-300 leading-relaxed">
+                      Add podflow to any MCP-capable agent and it can search your processed episodes, pull cross-episode guest profiles, filter extracted ideas by topic, and ingest new RSS feeds on demand &mdash; using your local cache and your own API key.
+                    </p>
+                    <ul className="space-y-2 text-sm text-slate-300">
+                      <li><code className="text-brand-400">search_episodes</code> &mdash; keyword search across titles, guests, and ideas</li>
+                      <li><code className="text-brand-400">get_guest</code> &mdash; who they are, where they appeared, why follow</li>
+                      <li><code className="text-brand-400">get_ideas</code> &mdash; extracted ideas by topic and relevance</li>
+                      <li><code className="text-brand-400">list_follow_worthy</code> &mdash; people worth following, with context</li>
+                      <li><code className="text-brand-400">get_stats</code> &mdash; cache totals and cost</li>
+                      <li><code className="text-brand-400">ingest_feed</code> &mdash; point it at any podcast RSS feed</li>
+                    </ul>
+                    <p className="text-slate-400 text-sm">
+                      Episode-level intelligence today (descriptions plus Apple transcript snippets). Local-first, same as the CLI.
+                    </p>
                   </div>
-                )}
-
-                {premiumTab === 'mentions' && (
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-bold text-white">Real-time Podcast Mention Tracking</h3>
-                      <p className="text-slate-300">Monitor millions of audio minutes across thousands of podcasts. Perfect for tracking when your business, product, or keyword is mentioned in the wild.</p>
-                    </div>
-
-                    <div className="space-y-4 max-w-2xl mx-auto">
-                      <div className="border border-brand-500/30 bg-brand-500/5 rounded-2xl p-6 relative">
-                        <span className="absolute top-4 right-4 bg-brand-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">NEW MENTION</span>
-                        <span className="text-xs font-bold text-pink-400 uppercase tracking-wider">Indie Hackers Podcast • Episode #412</span>
-                        <p className="text-sm text-slate-300 mt-2 mb-4 leading-relaxed">
-                          "...we used a tool called <strong className="text-white bg-brand-500/20 px-1.5 py-0.5 rounded">Total Audio Promo</strong> to automate our release outreach, and it doubled our booking rate. We also used <strong className="text-white bg-brand-500/20 px-1.5 py-0.5 rounded">SpotCheck</strong> to validate..."
-                        </p>
-                        <div className="flex flex-wrap gap-3">
-                          <button className="px-4 py-2 bg-brand-500 text-white rounded-lg text-xs font-semibold hover:bg-brand-600 transition-colors" onClick={() => alert('Feature mock: Generating short video clip with transcripts.')}>🎥 Generate Social Clip</button>
-                          <a href="https://totalaudiopromo.com" target="_blank" rel="noreferrer" className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-1">🚀 Open in Total Audio Promo</a>
-                        </div>
-                      </div>
-
-                      <div className="border border-white/10 bg-white/5 rounded-2xl p-6 relative">
-                        <span className="text-xs font-bold text-pink-400 uppercase tracking-wider">The Creator Pitch • Episode #88</span>
-                        <p className="text-sm text-slate-300 mt-2 mb-4 leading-relaxed">
-                          "...if you want to do PR correctly, you need to check out <strong className="text-white bg-brand-500/20 px-1.5 py-0.5 rounded">Newsjack.cc</strong>. It finds trending hooks that journalists care about..."
-                        </p>
-                        <div className="flex flex-wrap gap-3">
-                          <button className="px-4 py-2 bg-brand-500 text-white rounded-lg text-xs font-semibold hover:bg-brand-600 transition-colors" onClick={() => alert('Feature mock: Generating short video clip.')}>🎥 Generate Social Clip</button>
-                          <a href="https://newsjack.cc" target="_blank" rel="noreferrer" className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg text-xs font-semibold hover:bg-white/10 transition-colors inline-flex items-center gap-1">💡 View Hook on Newsjack</a>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="bg-black/30 border border-white/10 rounded-2xl p-5 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
+                    <div className="text-slate-500 mb-3">{'// claude_desktop_config.json / .mcp.json'}</div>
+                    <pre className="whitespace-pre">{`{
+  "mcpServers": {
+    "podflow": {
+      "command": "npx",
+      "args": ["-y", "podflow", "mcp"]
+    }
+  }
+}`}</pre>
                   </div>
-                )}
-
-                {premiumTab === 'debates' && (
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                      <h3 className="text-2xl font-bold text-white">AI Synthesized Audio Debates</h3>
-                      <p className="text-slate-300">Want to hear varying viewpoints on a subject? Choose topics and podcasters, and let Podflow's RAG compiler synthesize a cohesive conversation compiling their exact stated opinions.</p>
-                    </div>
-
-                    <div className="border border-white/10 rounded-2xl bg-black/20 p-5 space-y-4 max-w-xl mx-auto">
-                      <div className="bg-white/5 px-4 py-2 rounded-lg border border-white/10 text-sm flex gap-2">
-                        <span className="text-slate-400">Compare viewpoints on:</span>
-                        <span className="font-bold text-brand-400">"Decentralizing Edge LLMs"</span>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="bg-brand-500/5 border border-brand-500/10 rounded-2xl p-4 max-w-[85%] space-y-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-400">Dr. Aris Vance (Tech Frontiers)</span>
-                          <p className="text-slate-300 text-xs md:text-sm leading-relaxed">"Edge computing is essential because local models can run with zero latency without sending confidential data to centralized cloud hosts."</p>
-                        </div>
-                        <div className="bg-pink-500/5 border border-pink-500/10 rounded-2xl p-4 max-w-[85%] ml-auto space-y-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-pink-400">Sam Altman (AI Inside)</span>
-                          <p className="text-slate-300 text-xs md:text-sm leading-relaxed">"While local edge architectures are improving, the heavy logic capacity of giant frontier cluster servers will always outperform a phone's CPU."</p>
-                        </div>
-                      </div>
-                      <div className="text-center pt-2">
-                        <button className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white rounded-full text-xs font-bold transition-all shadow-glow" onClick={() => alert('Synthesizing speech from vector database source clips...')}>
-                          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                          </svg>
-                          Listen to Synthesized Briefing (AI Voice)
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </div>
               </GlassCard>
               </AnimatedSection>
             </section>
@@ -506,8 +371,8 @@ export function App() {
             <section id="pricing">
               <AnimatedSection className="space-y-12 py-12">
               <div className="text-center space-y-4 max-w-2xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Flexible Plans for Every Stage</h2>
-                <p className="text-slate-400 text-lg">From local hacker tools to high-throughput PR agency monitoring.</p>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Free. Open source. That’s the plan.</h2>
+                <p className="text-slate-400 text-lg">podflow is a local-first CLI under the MIT licence. There is no paid tier.</p>
               </div>
               <PricingTable tiers={pricingTiers} />
               </AnimatedSection>
@@ -545,7 +410,7 @@ export function App() {
                   {
                     title: "totalaud.io",
                     icon: "📅",
-                    desc: "Release planning and scheduling workspace for independent artists looking to manage timelines and promotional checklists.",
+                    desc: "A second opinion before release — a thinking and finishing system for independent artists. Finish, plan the release, and pitch with confidence.",
                     url: "https://totalaud.io"
                   }
                 ].map((item, idx) => (
