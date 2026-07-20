@@ -11,7 +11,7 @@ import { loadCache, saveCache, isProcessed, makeKey, mergeEntries } from './cach
 import { generateDigest } from './output/markdown.js';
 import * as ui from './ui/format.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 
 // ── init ───────────────────────────────────────────────────────────
 
@@ -466,6 +466,20 @@ function registerImport(program: Command): void {
     });
 }
 
+// ── mcp ────────────────────────────────────────────────────────────
+
+function registerMcp(program: Command): void {
+  program
+    .command('mcp')
+    .description('Start the podflow MCP server (stdio) — ears for agents')
+    .action(async () => {
+      // Lazy import keeps normal CLI startup free of the MCP SDK.
+      // NOTE: no stdout writes in this path — stdio IS the MCP transport.
+      const { startMcpServer } = await import('./mcp/server.js');
+      await startMcpServer();
+    });
+}
+
 // ── main ───────────────────────────────────────────────────────────
 
 const program = new Command()
@@ -479,5 +493,6 @@ registerSubs(program);
 registerStats(program);
 registerUi(program);
 registerImport(program);
+registerMcp(program);
 
 program.parse();
