@@ -63,15 +63,15 @@ function buildEpisodeInput(config: PodflowConfig, ep: DetailedEpisode, index: nu
 function getModel(config: PodflowConfig) {
   switch (config.provider) {
     case 'anthropic': {
-      const anthropic = createAnthropic();
+      const anthropic = createAnthropic(config.apiKey ? { apiKey: config.apiKey } : undefined);
       return anthropic(config.model || 'claude-haiku-4-5-20251001');
     }
     case 'openai': {
-      const openai = createOpenAI();
+      const openai = createOpenAI(config.apiKey ? { apiKey: config.apiKey } : undefined);
       return openai(config.model || 'gpt-4o-mini');
     }
     case 'google': {
-      const google = createGoogleGenerativeAI();
+      const google = createGoogleGenerativeAI(config.apiKey ? { apiKey: config.apiKey } : undefined);
       return google(config.model || 'gemini-2.0-flash');
     }
     case 'ollama': {

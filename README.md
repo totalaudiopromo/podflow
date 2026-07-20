@@ -37,7 +37,25 @@ podflow digest
 | `podflow digest --backfill` | Process all episodes |
 | `podflow subs` | List podcast subscriptions |
 | `podflow stats` | Cache statistics |
+| `podflow schedule` | Weekly automatic digests + notification (macOS) |
 | `podflow mcp` | Start the MCP server (stdio) — ears for agents |
+
+## Set it and forget it
+
+`podflow init` now walks you through setup interactively (provider, key, interests) —
+no JSON editing. Then:
+
+```bash
+podflow schedule            # weekly, Mondays 08:00
+podflow schedule --daily --time 07:30
+podflow schedule --status   # check it
+podflow schedule --off      # remove it
+```
+
+Each scheduled run processes new episodes and ends with a macOS notification, so the
+digest reaches you instead of waiting in a file. Your API key is stored in
+`~/.podflow/config.json` (permissions 0600) so scheduled runs work without shell
+environment variables.
 
 ## Agents can use it too (MCP)
 
