@@ -15,11 +15,19 @@ const VERSION = '0.2.0';
 
 // ── init ───────────────────────────────────────────────────────────
 
+const PROVIDER_CHOICES = [
+  { key: 'anthropic', label: 'Anthropic (Claude Haiku — recommended)', envVar: 'ANTHROPIC_API_KEY' },
+  { key: 'openai', label: 'OpenAI (gpt-4o-mini)', envVar: 'OPENAI_API_KEY' },
+  { key: 'google', label: 'Google (Gemini Flash)', envVar: 'GOOGLE_GENERATIVE_AI_API_KEY' },
+  { key: 'ollama', label: 'Ollama (local, free, no key)', envVar: '' },
+] as const;
+
 function registerInit(program: Command): void {
   program
     .command('init')
-    .description('Create config at ~/.podflow/')
-    .action(async () => {
+    .description('Set up podflow (interactive) — config lands at ~/.podflow/')
+    .option('-y, --yes', 'Skip the wizard and write defaults (old behaviour)')
+    .action(async (opts) => {
       ui.intro(VERSION);
 
       if (configExists()) {
@@ -31,15 +39,89 @@ function registerInit(program: Command): void {
         return;
       }
 
-      initConfig();
-      ui.stepComplete('Config created at ~/.podflow/');
-      ui.blank();
-      ui.nextSteps([
-        { cmd: 'nano ~/.podflow/config.json', desc: 'Set your interests' },
-        { cmd: 'export ANTHROPIC_API_KEY=...', desc: 'Set your API key' },
-        { cmd: 'podflow digest --dry-run', desc: 'Preview episodes' },
-      ]);
-      ui.blank();
+      // Non-interactive path: --yes flag, or no TTY (CI, scripts, agents).
+      if (opts.yes || !process.stdin.isTTY) {
+        initConfig();
+        ui.stepComplete('Config created at ~/.podflow/ (defaults)');
+        ui.blank();
+        ui.nextSteps([
+          { cmd: 'nano ~/.podflow/config.json', desc: 'Set your interests' },
+          { cmd: 'export ANTHROPIC_API_KEY=...', desc: 'Set your API key' },
+          { cmd: 'podflow digest --dry-run', desc: 'Preview episodes' },
+        ]);
+        ui.blank();
+        return;
+      }
+
+      // Interactive wizard — a human's first five minutes should not involve
+      // hand-editing JSON.
+      const { createInterface } = await import('node:readline/promises');
+      const rl = createInterface({ input: process.stdin, output: process.stdout });
+      const ask = async (q: string, fallback = ''): Promise<string> => {
+        const answer = (await rl.question(q)).trim();
+        return answer || fallback;
+      };
+
+      try {
+        const config = initConfig();
+
+        console.log('');
+        const about = await ask(
+          'What do you do? (one line, used to judge relevance)\n> ',
+          config.about
+        );
+        config.about = about;
+
+        console.log('\nWhich AI provider?');
+        PROVIDER_CHOICES.forEach((p, i) => console.log(`  ${i + 1}. ${p.label}`));
+        const provIdx = parseInt(await ask('> ', '1'), 10);
+        const chosen = PROVIDER_CHOICES[Math.min(Math.max(provIdx, 1), 4) - 1];
+        config.provider = chosen.key;
+        config.model = ''; // let getModel pick the provider default
+
+        if (chosen.envVar) {
+          const envKey = process.env[chosen.envVar];
+          if (envKey) {
+            const useEnv = await ask(
+              `\nFound ${chosen.envVar} in your environment. Use it? (Y/n) > `,
+              'y'
+            );
+            if (useEnv.toLowerCase().startsWith('y')) {
+              // Store in config so scheduled runs work without shell env.
+              config.apiKey = envKey;
+            }
+          }
+          if (!config.apiKey) {
+            const pasted = await ask(
+              `\nPaste your ${chosen.envVar.replace(/_/g, ' ').toLowerCase()} (stored in ~/.podflow/config.json, chmod 600; leave blank to use the env var later)\n> `
+            );
+            if (pasted) config.apiKey = pasted;
+          }
+        }
+
+        const interests = await ask(
+          '\nYour interest topics, comma-separated (blank keeps sensible defaults)\n> '
+        );
+        if (interests) {
+          config.interests = interests.split(',').map((raw) => {
+            const name = raw.trim();
+            return { name, keywords: [name.toLowerCase()], why: `Interested in ${name}.` };
+          });
+        }
+
+        saveConfig(config);
+        console.log('');
+        ui.stepComplete('Config created at ~/.podflow/');
+        ui.blank();
+        ui.nextSteps([
+          { cmd: 'podflow digest --dry-run', desc: 'Preview episodes (no API calls)' },
+          { cmd: 'podflow digest --max-episodes 10', desc: 'Run your first digest' },
+          { cmd: 'podflow schedule', desc: 'Get a digest every week, automatically' },
+        ]);
+        ui.blank();
+      } finally {
+        rl.close();
+      }
     });
 }
 
@@ -61,6 +143,7 @@ function registerDigest(program: Command): void {
     .option('--verbose', 'Show episode details')
     .option('--rss <url>', 'Process a specific RSS feed URL')
     .option('-q, --quiet', 'Suppress output except errors')
+    .option('--scheduled', 'Scheduled-run mode: end with a macOS notification')
     .action(async (opts) => {
       const startTime = Date.now();
 
@@ -90,6 +173,8 @@ function registerDigest(program: Command): void {
 
       // ── Load cache ──
       let cache = loadCache();
+      // Snapshot for this run's delta (used by the --scheduled notification).
+      const statsBefore = { ...cache.stats };
 
       // ── Query ──
       let allEpisodes: DetailedEpisode[] = [];
@@ -153,14 +238,20 @@ function registerDigest(program: Command): void {
 
       if (toProcess.length === 0) {
         if (!opts.quiet) ui.blank();
+        let outPath = config.outputPath;
         if (cache.stats.totalProcessed > 0) {
           const regen = ui.createSpinner('Regenerating digest...');
           regen.start();
-          const outPath = generateDigest(cache, config);
+          outPath = generateDigest(cache, config);
           regen.succeed('Digest regenerated');
           ui.outputPath(outPath);
         } else {
           ui.step('Nothing to process.');
+        }
+        // Scheduled runs notify even when quiet — most weeks land here.
+        if (opts.scheduled) {
+          const { notifyDigest } = await import('./schedule.js');
+          notifyDigest(0, 0, 0, outPath);
         }
         if (!opts.quiet) ui.outro(Date.now() - startTime);
         return;
@@ -310,6 +401,17 @@ function registerDigest(program: Command): void {
       const outPath = generateDigest(cache, config);
       digestSpinner.succeed('Digest written');
       ui.outputPath(outPath);
+
+      // The human loop: scheduled runs end with a notification, not a silent file.
+      if (opts.scheduled) {
+        const { notifyDigest } = await import('./schedule.js');
+        notifyDigest(
+          cache.stats.totalProcessed - statsBefore.totalProcessed,
+          cache.stats.totalGuests - statsBefore.totalGuests,
+          cache.stats.totalIdeas - statsBefore.totalIdeas,
+          outPath
+        );
+      }
 
       if (!opts.quiet) {
         ui.blank();
@@ -466,6 +568,71 @@ function registerImport(program: Command): void {
     });
 }
 
+// ── schedule ───────────────────────────────────────────────────────
+
+function registerSchedule(program: Command): void {
+  program
+    .command('schedule')
+    .description('Run the digest automatically (weekly by default) and get notified — macOS')
+    .option('--daily', 'Run every day instead of weekly')
+    .option('--time <HH:MM>', 'Time of day (24h)', '08:00')
+    .option('--max-episodes <n>', 'Episodes per scheduled run', '15')
+    .option('--off', 'Remove the schedule')
+    .option('--status', 'Show schedule status')
+    .action(async (opts) => {
+      const { installSchedule, removeSchedule, scheduleStatus } = await import('./schedule.js');
+      ui.intro(VERSION);
+
+      if (opts.status) {
+        const s = scheduleStatus();
+        if (!s.installed) {
+          ui.hint('No schedule installed. Run `podflow schedule` to set one up.');
+        } else {
+          ui.stepComplete(`Schedule installed (${s.loaded ? 'loaded' : 'NOT loaded — try re-running podflow schedule'})`);
+          ui.hint(`Plist: ${s.plistPath}`);
+          ui.hint('Logs: ~/.podflow/logs/schedule.log');
+        }
+        ui.blank();
+        return;
+      }
+
+      if (opts.off) {
+        const existed = removeSchedule();
+        ui.stepComplete(existed ? 'Schedule removed' : 'No schedule was installed');
+        ui.blank();
+        return;
+      }
+
+      if (!configExists()) {
+        ui.error('No config found. Run `podflow init` first.');
+        process.exit(1);
+      }
+      const config = loadConfig();
+      if (!config.apiKey && config.provider !== 'ollama') {
+        ui.error(
+          'Scheduled runs need an API key in ~/.podflow/config.json (launchd cannot see your shell env).\n' +
+            'Re-run `podflow init` after removing the config, or add "apiKey": "..." to config.json.'
+        );
+        process.exit(1);
+      }
+
+      try {
+        const { summary } = installSchedule({
+          daily: Boolean(opts.daily),
+          time: opts.time,
+          maxEpisodes: parseInt(opts.maxEpisodes, 10) || 15,
+        });
+        ui.stepComplete('Schedule installed');
+        ui.hint(summary);
+        ui.hint('Check anytime: podflow schedule --status  |  remove: podflow schedule --off');
+        ui.blank();
+      } catch (err) {
+        ui.error((err as Error).message);
+        process.exit(1);
+      }
+    });
+}
+
 // ── mcp ────────────────────────────────────────────────────────────
 
 function registerMcp(program: Command): void {
@@ -493,6 +660,7 @@ registerSubs(program);
 registerStats(program);
 registerUi(program);
 registerImport(program);
+registerSchedule(program);
 registerMcp(program);
 
 program.parse();

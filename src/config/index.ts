@@ -67,7 +67,9 @@ export function saveConfig(config: PodflowConfig): void {
   fs.mkdirSync(CONFIG_DIR, { recursive: true });
 
   const { podcasts, ...rest } = config;
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(rest, null, 2));
+  // 0600: config.json may hold the provider API key (see PodflowConfig.apiKey).
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(rest, null, 2), { mode: 0o600 });
+  fs.chmodSync(CONFIG_FILE, 0o600);
   fs.writeFileSync(PODCASTS_FILE, JSON.stringify(podcasts, null, 2));
 }
 
