@@ -5,6 +5,12 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // @totalaudiopromo/ui is symlinked from ../newsjack/packages/ui, which carries its
+  // own node_modules/react. Without deduping, the shared components load a second React
+  // instance → "Cannot read properties of null (reading 'useState')" → blank page.
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   build: {
     rollupOptions: {
       input: {
