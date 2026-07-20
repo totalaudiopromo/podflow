@@ -37,6 +37,38 @@ podflow digest
 | `podflow digest --backfill` | Process all episodes |
 | `podflow subs` | List podcast subscriptions |
 | `podflow stats` | Cache statistics |
+| `podflow mcp` | Start the MCP server (stdio) — ears for agents |
+
+## Agents can use it too (MCP)
+
+podflow ships an [MCP](https://modelcontextprotocol.io) server, so AI agents can query
+your podcast intelligence directly — what was said, by whom, and why it matters.
+
+```json
+{
+  "mcpServers": {
+    "podflow": {
+      "command": "npx",
+      "args": ["-y", "podflow", "mcp"]
+    }
+  }
+}
+```
+
+Six tools:
+
+| Tool | What an agent gets |
+| ---- | ------------------ |
+| `search_episodes` | Keyword search across titles, guests, ideas, and notes |
+| `get_guest` | Cross-episode guest profile: role, company, appearances, why follow |
+| `get_ideas` | Extracted ideas filtered by topic and relevance |
+| `list_follow_worthy` | Guests flagged worth following, with context |
+| `get_stats` | Cache totals and cost |
+| `ingest_feed` | Point it at any podcast RSS feed to extract new episodes on demand |
+
+Intelligence is episode-level (descriptions plus Apple transcript snippets where
+available). Uses your existing `~/.podflow` config and provider key; `ingest_feed`
+costs pennies per episode, same as `digest`.
 
 ## Why podflow?
 
