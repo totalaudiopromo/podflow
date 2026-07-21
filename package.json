@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsup src/cli.ts --format esm --target node20 --clean",
     "dev": "tsx src/cli.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "keywords": [
     "podcast",
@@ -57,6 +58,7 @@
     "@types/node": "^25.5.0",
     "tsup": "^8.0.0",
     "tsx": "^4.0.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
   }
 }

@@ -91,6 +91,92 @@ interface RawExtraction {
   relevanceNote: string;
 }
 
+// ---------------------------------------------------------------------------
+// Defensive coercion for model output.
+//
+// The model returns free-form JSON, so individual fields can be missing, the
+// wrong type, or null. Rather than trusting the shape (which lets a bad value
+// flow downstream to a `.map`/`.length` crash) or throwing, we coerce every
+// field to its declared type, dropping anything unusable. The result is always
+// a well-formed RawExtraction.
+// ---------------------------------------------------------------------------
+
+const EXTRACTION_KEYS = ['guests', 'keyIdeas', 'peopleMentioned', 'relevanceScore', 'relevanceNote'];
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null;
+}
+
+function asString(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+
+function asNumber(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+
+function asBool(v: unknown): boolean {
+  return typeof v === 'boolean' ? v : false;
+}
+
+function coerceGuests(v: unknown): Guest[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter(isRecord).map((g) => ({
+    name: asString(g.name),
+    role: asString(g.role),
+    company: asString(g.company),
+    socials: Array.isArray(g.socials) ? g.socials.filter((s): s is string => typeof s === 'string') : [],
+    followWorthy: asBool(g.followWorthy),
+    whyFollow: asString(g.whyFollow),
+  }));
+}
+
+function coerceKeyIdeas(v: unknown): KeyIdea[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter(isRecord).map((k) => ({
+    idea: asString(k.idea),
+    category: asString(k.category),
+    actionable: asBool(k.actionable),
+    relevance: asNumber(k.relevance),
+  }));
+}
+
+function coercePeopleMentioned(v: unknown): PersonMentioned[] {
+  if (!Array.isArray(v)) return [];
+  return v.filter(isRecord).map((p) => ({
+    name: asString(p.name),
+    context: asString(p.context),
+  }));
+}
+
+function coerceExtraction(v: unknown): RawExtraction {
+  const o = isRecord(v) ? v : {};
+  return {
+    guests: coerceGuests(o.guests),
+    keyIdeas: coerceKeyIdeas(o.keyIdeas),
+    peopleMentioned: coercePeopleMentioned(o.peopleMentioned),
+    relevanceScore: asNumber(o.relevanceScore),
+    relevanceNote: asString(o.relevanceNote),
+  };
+}
+
+/** True if `v` plausibly is a per-episode extraction (has at least one known key). */
+function looksLikeExtraction(v: unknown): boolean {
+  return isRecord(v) && EXTRACTION_KEYS.some((k) => k in v);
+}
+
+/**
+ * Normalise parsed model output into a list of raw extraction candidates:
+ * an array is taken as-is; a lone extraction-shaped object is wrapped into a
+ * one-element list (a single-episode batch can come back unwrapped); anything
+ * else (e.g. an `{ "error": ... }` refusal object) yields no candidates.
+ */
+function toExtractionList(parsed: unknown): unknown[] {
+  if (Array.isArray(parsed)) return parsed;
+  if (looksLikeExtraction(parsed)) return [parsed];
+  return [];
+}
+
 export interface ExtractionResult {
   entries: Map<string, DigestEntry>;
   inputTokens: number;
@@ -122,9 +208,9 @@ export async function extractBatch(
     .replace(/\n?```\s*$/gm, '')
     .trim();
 
-  let extractions: RawExtraction[];
+  let parsed: unknown;
   try {
-    extractions = JSON.parse(cleaned);
+    parsed = JSON.parse(cleaned);
   } catch {
     // Try to find balanced array brackets
     const start = cleaned.indexOf('[');
@@ -147,7 +233,7 @@ export async function extractBatch(
       const lastBrace = cleaned.lastIndexOf('}');
       if (lastBrace > start) {
         try {
-          extractions = JSON.parse(cleaned.slice(start, lastBrace + 1) + ']');
+          parsed = JSON.parse(cleaned.slice(start, lastBrace + 1) + ']');
         } catch {
           return { entries: new Map(), inputTokens, outputTokens };
         }
@@ -156,28 +242,32 @@ export async function extractBatch(
       }
     } else {
       try {
-        extractions = JSON.parse(cleaned.slice(start, end + 1));
+        parsed = JSON.parse(cleaned.slice(start, end + 1));
       } catch {
         return { entries: new Map(), inputTokens, outputTokens };
       }
     }
   }
 
+  const rawList = toExtractionList(parsed);
+
   const entries = new Map<string, DigestEntry>();
-  for (let i = 0; i < Math.min(episodes.length, extractions.length); i++) {
+  for (let i = 0; i < Math.min(episodes.length, rawList.length); i++) {
     const ep = episodes[i];
-    const ext = extractions[i];
+    // coerceExtraction never throws and always returns a well-formed object,
+    // so a null / wrong-typed element can't crash the loop or leak bad types.
+    const ext = coerceExtraction(rawList[i]);
     const key = `${ep.podcast}::${ep.title}`;
 
     entries.set(key, {
       title: ep.title,
       podcast: ep.podcast,
       lastPlayed: ep.lastPlayed,
-      guests: ext.guests || [],
-      keyIdeas: ext.keyIdeas || [],
-      peopleMentioned: ext.peopleMentioned || [],
-      relevanceScore: ext.relevanceScore || 0,
-      relevanceNote: ext.relevanceNote || '',
+      guests: ext.guests,
+      keyIdeas: ext.keyIdeas,
+      peopleMentioned: ext.peopleMentioned,
+      relevanceScore: ext.relevanceScore,
+      relevanceNote: ext.relevanceNote,
       processedAt: new Date().toISOString(),
     });
   }
