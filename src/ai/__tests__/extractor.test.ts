@@ -8,7 +8,7 @@ import { makeConfig, makeEpisode, extraction, EVAL_CASES } from './fixtures.js';
 const generateText = vi.fn();
 vi.mock('ai', () => ({ generateText: (...args: unknown[]) => generateText(...args) }));
 
-const { extractBatch } = await import('../extractor.js');
+const { extractBatch, estimateCost } = await import('../extractor.js');
 
 /** Feed a raw model-output string through extractBatch for `n` episodes. */
 function runExtractor(response: string, episodeCount = 1) {
@@ -182,6 +182,14 @@ describe('extractBatch — clean failure on unusable output', () => {
     const res = await runExtractor('[{"relevanceNote":"bad \x01 char"');
     expect(res.entries.size).toBe(0);
   });
+
+  it('defaults token counts to 0 when the model result omits usage', async () => {
+    generateText.mockResolvedValue({ text: JSON.stringify([extraction()]) }); // no `usage`
+    const res = await extractBatch(makeConfig(), [makeEpisode()]);
+    expect(res.entries.size).toBe(1);
+    expect(res.inputTokens).toBe(0);
+    expect(res.outputTokens).toBe(0);
+  });
 });
 
 // ===========================================================================
@@ -247,7 +255,45 @@ describe('extractBatch — KNOWN DEFECTS (characterisation, not endorsement)', (
 });
 
 // ===========================================================================
-// 6. Eval dataset — synthetic-but-realistic episodes end-to-end
+// 6. estimateCost — pure token/cost projection (no model call)
+// ===========================================================================
+describe('estimateCost', () => {
+  it('projects token counts from the batch/per-episode heuristics', () => {
+    // 6 episodes -> ceil(6/5) = 2 batches. input = 500*2 + 6*400 = 3400;
+    // output = 6*250 = 1500.
+    const episodes = Array.from({ length: 6 }, () => makeEpisode());
+    const est = estimateCost(episodes, makeConfig({ provider: 'openai' }));
+    expect(est.inputTokens).toBe(3400);
+    expect(est.outputTokens).toBe(1500);
+  });
+
+  it('reports ollama as free (local) rather than a dollar figure', () => {
+    const est = estimateCost([makeEpisode()], makeConfig({ provider: 'ollama' }));
+    expect(est.estimatedCost).toBe('free (local)');
+  });
+
+  it('formats paid providers as a ~$ dollar amount', () => {
+    const est = estimateCost([makeEpisode()], makeConfig({ provider: 'anthropic' }));
+    expect(est.estimatedCost).toMatch(/^~\$\d+\.\d{2}$/);
+  });
+
+  it('falls back to anthropic rates for an unknown provider without throwing', () => {
+    const anthropic = estimateCost([makeEpisode()], makeConfig({ provider: 'anthropic' }));
+    const unknown = estimateCost([makeEpisode()], makeConfig({ provider: 'mystery' as never }));
+    expect(unknown.estimatedCost).toBe(anthropic.estimatedCost);
+  });
+
+  it('scales input tokens with batch count as episode volume grows', () => {
+    const small = estimateCost(Array.from({ length: 5 }, () => makeEpisode()), makeConfig());
+    const large = estimateCost(Array.from({ length: 11 }, () => makeEpisode()), makeConfig());
+    // 5 eps -> 1 batch; 11 eps -> 3 batches. More episodes => more tokens.
+    expect(large.inputTokens).toBeGreaterThan(small.inputTokens);
+    expect(large.outputTokens).toBeGreaterThan(small.outputTokens);
+  });
+});
+
+// ===========================================================================
+// 7. Eval dataset — synthetic-but-realistic episodes end-to-end
 // ===========================================================================
 describe('extractBatch — eval dataset', () => {
   for (const evalCase of EVAL_CASES) {
