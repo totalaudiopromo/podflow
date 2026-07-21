@@ -213,44 +213,64 @@ describe('extractBatch — episode/extraction count mismatch', () => {
 });
 
 // ===========================================================================
-// 5. Characterisation of KNOWN DEFECTS (see PR description).
+// 5. Hardening against malformed extraction objects.
 //
-// These tests pin CURRENT behaviour so regressions are visible. Each one marks
-// output the extractor gets WRONG. They are intentionally NOT "fixes" — the
-// task is test-hardening only, and a fix would be a production behaviour change.
-// If/when the extractor is hardened, these assertions should be inverted.
+// These pin the fixes for three previously-characterised defects: a lone
+// object being dropped, wrong-typed fields leaking through, and a null element
+// crashing the mapping loop. Each now recovers or fails cleanly.
 // ===========================================================================
-describe('extractBatch — KNOWN DEFECTS (characterisation, not endorsement)', () => {
-  // FINDING #1: a single JSON object (not wrapped in an array) is silently
-  // dropped. For a single-episode batch this is a plausible model response, yet
-  // the episode produces no entry at all — a lossy, wrong result.
-  it('DEFECT: drops a lone JSON object that is not wrapped in an array', async () => {
-    const res = await runExtractor(JSON.stringify(extraction({ relevanceScore: 9, relevanceNote: 'lost' })), 1);
-    expect(res.entries.size).toBe(0); // WRONG: ideally this single object would map to the single episode.
+describe('extractBatch — malformed extraction objects are handled, not trusted', () => {
+  // FIX #1: a single extraction-shaped object (not wrapped in an array) is a
+  // plausible response for a single-episode batch, so it is now wrapped and
+  // mapped instead of being silently dropped.
+  it('recovers a lone extraction object by treating it as a single-episode array', async () => {
+    const res = await runExtractor(JSON.stringify(extraction({ relevanceScore: 9, relevanceNote: 'kept' })), 1);
+    expect(res.entries.size).toBe(1);
+    expect(firstEntry(res.entries)?.relevanceScore).toBe(9);
+    expect(firstEntry(res.entries)?.relevanceNote).toBe('kept');
   });
 
-  // FINDING #2: field types are never validated. A model that returns `guests`
-  // as a string (or any wrong type) has that value stored verbatim, producing a
-  // DigestEntry whose `guests` is not a Guest[]. Downstream `.map`/`.length`
-  // calls would then break far from the parse site.
-  it('DEFECT: stores a wrong-typed `guests` value (string) verbatim instead of coercing/rejecting', async () => {
+  // A lone object that is NOT extraction-shaped (e.g. a refusal / error object)
+  // must still yield no entries rather than a bogus empty one.
+  it('does not fabricate an entry from a lone non-extraction object', async () => {
+    const res = await runExtractor('{"error":"model refused"}', 1);
+    expect(res.entries.size).toBe(0);
+  });
+
+  // FIX #2: wrong-typed fields are coerced to their declared type. `guests` as
+  // a string is not a Guest[], so it collapses to an empty array instead of
+  // leaking a bad type downstream.
+  it('coerces a wrong-typed `guests` value (string) to an empty array', async () => {
     const res = await runExtractor('[{"guests":"Bob Smith","keyIdeas":[],"peopleMentioned":[],"relevanceScore":5,"relevanceNote":""}]');
-    const e = firstEntry(res.entries)!;
-    expect(e.guests).toBe('Bob Smith' as unknown as DigestEntry['guests']); // WRONG: guests should be Guest[].
+    expect(firstEntry(res.entries)?.guests).toEqual([]);
   });
 
-  // FINDING #2 (cont.): a string relevanceScore likewise passes straight through.
-  it('DEFECT: stores a wrong-typed `relevanceScore` (string) verbatim', async () => {
+  it('drops non-object elements inside the `guests` array', async () => {
+    const res = await runExtractor(
+      '[{"guests":["Bob Smith",{"name":"Real Guest","role":"","company":"","socials":[],"followWorthy":false,"whyFollow":""}],"keyIdeas":[],"peopleMentioned":[],"relevanceScore":5,"relevanceNote":""}]'
+    );
+    const guests = firstEntry(res.entries)!.guests;
+    expect(guests).toHaveLength(1);
+    expect(guests[0].name).toBe('Real Guest');
+  });
+
+  // FIX #2 (cont.): a non-numeric relevanceScore coerces to 0.
+  it('coerces a wrong-typed `relevanceScore` (string) to 0', async () => {
     const res = await runExtractor('[{"guests":[],"keyIdeas":[],"peopleMentioned":[],"relevanceScore":"high","relevanceNote":""}]');
-    expect(firstEntry(res.entries)?.relevanceScore).toBe('high' as unknown as number); // WRONG: should be a number.
+    expect(firstEntry(res.entries)?.relevanceScore).toBe(0);
   });
 
-  // FINDING #3: a `null` element inside the extractions array crashes the
-  // mapping loop with an unhandled TypeError. This VIOLATES the contract that
-  // the extractor must fail cleanly and never throw. A null-guard in the map
-  // loop would fix it, but that is a production change and out of scope here.
-  it('DEFECT: throws an unhandled TypeError on a null array element (should fail cleanly)', async () => {
-    await expect(runExtractor('[null]', 1)).rejects.toThrow(TypeError);
+  // FIX #3: a null element no longer throws — it maps to a clean, empty entry,
+  // preserving index alignment with the episode list.
+  it('maps a null array element to a clean empty entry without throwing', async () => {
+    const res = await runExtractor('[null]', 1);
+    expect(res.entries.size).toBe(1);
+    const e = firstEntry(res.entries)!;
+    expect(e.guests).toEqual([]);
+    expect(e.keyIdeas).toEqual([]);
+    expect(e.peopleMentioned).toEqual([]);
+    expect(e.relevanceScore).toBe(0);
+    expect(e.relevanceNote).toBe('');
   });
 });
 
