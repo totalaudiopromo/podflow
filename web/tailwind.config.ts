@@ -10,7 +10,7 @@ const config: Config = {
     './pricing-compare.html',
     './proof.html',
     './src/**/*.{js,ts,jsx,tsx}',
-    '../newsjack/packages/ui/src/**/*.{ts,tsx}',
+    './node_modules/@totalaudiopromo/ui/src/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {
