@@ -45,3 +45,11 @@ Always verify the token type before a release attempt — this has blocked publi
 ## House standards
 
 UK spelling, GBP currency, `feat:`/`fix:` commit prefixes. Calm professional tone.
+
+## PR watching
+
+Subscribe to PR events + arm exactly ONE fallback check-in 2-4 hours out. Never chain
+hourly re-arms — an hourly send_later loop re-reads the whole session context every fire
+to learn "still green" (22 Jul 2026 audit found these chains burning in this repo). On
+merge/close: unsubscribe and delete any pending trigger. Full rule:
+total-audio-platform/.claude/rules/pr-watching.md.
