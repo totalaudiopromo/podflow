@@ -2,7 +2,11 @@
   "mcpServers": {
     "podflow": {
       "command": "npx",
-      "args": ["-y", "tsx", "src/cli.ts", "mcp"]
+      "args": [
+        "-y",
+        "podflow",
+        "mcp"
+      ]
     }
   }
 }
