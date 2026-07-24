@@ -1,0 +1,109 @@
+/**
+ * Total Audio Promo design tokens.
+ * Framework-agnostic layer: plain CSS variables, consumable from any stack.
+ * Colour channels are space-separated RGB triplets so Tailwind can apply
+ * alpha (`rgb(var(--brand-500) / <alpha-value>)`).
+ */
+
+:root {
+  /* Typography Stack */
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-space-grotesk: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', monospace;
+
+  /* Tool Accent Color: Podflow Studio Purple #A855F7 paired with TAP Accent #00F59B & Amber #F59E0B */
+  --podflow-purple: 168 85 247;    /* #A855F7 */
+  --tap-accent: 0 245 155;          /* #00F59B */
+  --podflow-amber: 245 158 11;       /* #F59E0B */
+
+  /* Brand scale (Podflow Studio Purple by default) */
+  --brand-50: 250 245 255;
+  --brand-100: 243 232 255;
+  --brand-200: 233 213 255;
+  --brand-300: 216 180 254;
+  --brand-400: 192 132 252;        /* #C084FC */
+  --brand-500: 168 85 247;        /* #A855F7 Studio Purple */
+  --brand-600: 147 51 234;        /* #9333EA */
+  --brand-700: 126 34 206;        /* #7E22CE */
+  --brand-800: 107 33 168;
+  --brand-900: 88 28 135;
+
+  /* CTA / text gradient stops (Studio Purple → Electric Violet with Mint accent) */
+  --brand-gradient-from: 168 85 247;    /* purple-500 */
+  --brand-gradient-via: 192 132 252;     /* purple-400 */
+  --brand-gradient-to: 139 92 246;       /* violet-500 */
+  --brand-gradient-from-light: 192 132 252;
+  --brand-gradient-via-light: 216 180 254;
+  --brand-gradient-to-light: 233 213 255;
+
+  /* Dark surfaces (shared TAP Cyber-Clean Obsidian look) */
+  --surface-base: 6 7 9;            /* #060709 obsidian */
+  --surface-raised: 18 23 35;        /* rgba(18, 23, 35) */
+  --surface-overlay: 10 13 20;       /* rgba(10, 13, 20) */
+
+  /* Hairline borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+
+  /* Text */
+  --text-primary: 241 245 249;       /* slate-100 */
+  --text-secondary: 203 213 225;     /* slate-300 */
+  --text-muted: 148 163 184;         /* slate-400 */
+
+  --radius-card: 1rem;
+}
+
+[data-theme='podflow'] {
+  --brand-500: 168 85 247;
+  --brand-600: 147 51 234;
+  --brand-gradient-from: 168 85 247;
+  --brand-gradient-to: 139 92 246;
+}
+
+[data-theme='newsjack'] {
+  --brand-500: 239 68 68;
+  --brand-600: 220 38 38;
+  --brand-gradient-from: 239 68 68;
+  --brand-gradient-to: 244 63 94;
+}
+
+[data-theme='spotcheck'] {
+  --brand-500: 6 182 212;
+  --brand-600: 8 145 178;
+  --brand-gradient-from: 6 182 212;
+  --brand-gradient-to: 59 130 246;
+}
+
+/* Standard TAP Family Banner */
+.tap-banner {
+  background-color: #060709;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-family: var(--font-inter), -apple-system, sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  position: relative;
+  z-index: 51;
+}
+
+.tap-banner-content {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.tap-banner-badge {
+  background: rgba(168, 85, 247, 0.15);
+  color: #C084FC;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  padding: 0.15rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

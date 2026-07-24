@@ -20,6 +20,7 @@ const PROVIDER_CHOICES = [
   { key: 'openai', label: 'OpenAI (gpt-4o-mini)', envVar: 'OPENAI_API_KEY' },
   { key: 'google', label: 'Google (Gemini Flash)', envVar: 'GOOGLE_GENERATIVE_AI_API_KEY' },
   { key: 'ollama', label: 'Ollama (local, free, no key)', envVar: '' },
+  { key: 'openrouter', label: 'OpenRouter (Claude/Llama/Gemini via OpenRouter Key)', envVar: 'OPENROUTER_API_KEY' },
 ] as const;
 
 function registerInit(program: Command): void {

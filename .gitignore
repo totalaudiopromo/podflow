@@ -1,8 +1,10 @@
 node_modules/
 dist/
+.next/
 *.tsbuildinfo
 podflow-digest.md
 test-digest.md
+.pnpm-store/
 
 .env
 .env.local

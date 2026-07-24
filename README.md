@@ -8,11 +8,30 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 
-**Your podcast listening, working for you.** Extract guests, ideas, and insights from your Apple Podcasts library using AI.
+**Your podcast intelligence and guest pitching tool for music PR.** Extract guests, episode angles, host matches, and insights from Apple Podcasts and Spotify RSS feeds.
+
+Part of the **Total Audio Promo** suite (`totalaudiopromo.com`).
 
 ---
 
-## Quick Start
+## Workspace Packages
+
+- **`podflow` CLI**: CLI digest tool & native MCP server (`src/cli.ts`, npm package `podflow`).
+- **`@podflow/web`**: Next.js web application (`apps/web`) featuring the interactive pitching simulator, host match scoring cards, and PR roster dashboard.
+- **`@totalaudiopromo/ui`**: Total Audio Promo shared design system (`packages/ui`) with Studio Purple (`#A855F7`) theme tokens, Tailwind presets, and React components.
+
+---
+
+## Web App Quick Start
+
+```bash
+pnpm install
+pnpm --filter @podflow/web dev    # starts Next.js dev server on port 3010
+```
+
+---
+
+## Quick Start (CLI)
 
 ```bash
 npx podflow init                          # create config
@@ -90,19 +109,19 @@ costs pennies per episode, same as `digest`.
 
 ## Why podflow?
 
-- **Local-first.** Reads the Apple Podcasts SQLite database on your Mac. No cloud sync, no account needed.
+- **Local-first & Hosted.** Reads Apple Podcasts SQLite database locally or runs via the hosted Podflow Web UI.
 - **Your AI key, your choice.** Supports Anthropic, OpenAI, Google, and Ollama (local, free).
 - **Incremental.** Only processes new episodes. Run it weekly, costs pennies.
 - **Configurable interests.** Scores everything against what matters to *you*.
 
 ## How It Works
 
-1. Reads the Apple Podcasts SQLite database
+1. Reads the Apple Podcasts SQLite database & RSS feeds
 2. Prioritises episodes by podcast tier (you configure which podcasts matter)
 3. Batches episodes and sends to your chosen AI provider
-4. Extracts guests, ideas, people mentioned, and relevance scores
+4. Extracts guests, ideas, people mentioned, and host match relevance scores
 5. Caches results incrementally (interrupted runs resume)
-6. Generates a markdown digest
+6. Generates a markdown digest & powers the Podflow web pitching dashboard
 
 ## Configuration
 

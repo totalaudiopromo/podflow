@@ -78,8 +78,15 @@ function getModel(config: PodflowConfig) {
       const ollama = createOpenAI({ baseURL: 'http://localhost:11434/v1', apiKey: 'ollama' });
       return ollama(config.model || 'llama3.2');
     }
+    case 'openrouter': {
+      const openrouter = createOpenAI({
+        baseURL: 'https://openrouter.ai/api/v1',
+        apiKey: config.apiKey || process.env.OPENROUTER_API_KEY,
+      });
+      return openrouter(config.model || 'anthropic/claude-3.5-haiku');
+    }
     default:
-      throw new Error(`Unknown provider: ${config.provider}. Use: anthropic, openai, google, ollama`);
+      throw new Error(`Unknown provider: ${config.provider}. Use: anthropic, openai, google, ollama, openrouter`);
   }
 }
 
@@ -290,6 +297,7 @@ export function estimateCost(
     openai: { input: 0.15, output: 0.6 },      // GPT-4o-mini
     google: { input: 0.075, output: 0.3 },     // Gemini Flash
     ollama: { input: 0, output: 0 },           // Local
+    openrouter: { input: 0.8, output: 4.0 },   // OpenRouter default (Claude Haiku rate)
   };
 
   const rate = rates[config.provider] || rates.anthropic;

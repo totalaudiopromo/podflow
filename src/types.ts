@@ -121,14 +121,14 @@ export interface PodflowConfig {
   about: string;
   interests: InterestTopic[];
   podcasts: PodcastConfig;
-  provider: 'anthropic' | 'openai' | 'google' | 'ollama';
+  provider: 'anthropic' | 'openai' | 'google' | 'ollama' | 'openrouter';
   model: string;
   outputPath: string;
   feeds?: string[];
   /**
    * Optional provider API key stored in ~/.podflow/config.json (written 0600).
    * When absent, the provider SDK falls back to its environment variable
-   * (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_GENERATIVE_AI_API_KEY).
+   * (ANTHROPIC_API_KEY / OPENAI_API_KEY / GOOGLE_GENERATIVE_AI_API_KEY / OPENROUTER_API_KEY).
    * Storing it here lets scheduled (launchd) runs work without shell env.
    */
   apiKey?: string;

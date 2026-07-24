@@ -1,0 +1,45 @@
+{
+  "name": "@totalaudiopromo/ui",
+  "version": "0.1.0",
+  "description": "Shared Total Audio Promo design system: theme tokens, Tailwind preset, and React components for TAP products (newsjack, spotcheck, podflow).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "import": "./dist/app.js"
+    },
+    "./tokens.css": "./tokens.css",
+    "./tailwind-preset": "./tailwind-preset.cjs"
+  },
+  "files": [
+    "dist",
+    "src",
+    "tokens.css",
+    "tailwind-preset.cjs",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "lucide-react": ">=0.400.0",
+    "react": ">=18",
+    "tailwindcss": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "lucide-react": "^0.469.0",
+    "react": "^19.0.0",
+    "tailwindcss": "^3.4.17",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

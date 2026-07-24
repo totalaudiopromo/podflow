@@ -13,7 +13,8 @@
     "@totalaudiopromo/ui": "file:../../newsjack/packages/ui",
     "lucide-react": "^0.469.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "posthog-js": "^1.407.2"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
