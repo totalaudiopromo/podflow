@@ -1,0 +1,111 @@
+# Podflow — Extended LLM Technical Specification (llms-full.txt)
+
+> Comprehensive technical reference, CLI schemas, cURL examples, and architectural specifications for deep-reasoning AI models.
+
+---
+
+## 1. Overview & Architecture
+
+Podflow is an AI-powered podcast intelligence engine and local CLI utility. It processes podcast audio, performs speaker diarization, generates word-level transcripts, and uses LLMs to extract structured guest profiles, key ideas, and actionable takeaways.
+
+- **Local Engine:** Node.js CLI parsing local macOS Apple Podcasts SQLite database (`~/Library/Group Containers/243L8673M2.com.apple.podcasts/MTLibrary.sqlite`).
+- **Cloud SaaS Platform:** Automated RSS feed ingestion, semantic vector indexing, keyword mention monitoring, and hosted LLM reasoning.
+
+---
+
+## 2. CLI Command Line Interface Specifications
+
+### Installation
+```bash
+npm install -g podflow
+```
+
+### Synopsis & Usage
+```bash
+podflow [command] [options]
+```
+
+### Commands
+- `podflow sync`: Inspect local Apple Podcasts SQLite library or RSS feeds and extract episode digests.
+- `podflow extract <feed-or-file>`: Process a specific audio file or RSS URL.
+- `podflow list`: List all podcasts available in the local macOS Podcasts database.
+
+### Command Options & Flags
+| Flag | Short | Type | Description | Default |
+|---|---|---|---|---|
+| `--local` | `-l` | boolean | Run transcription and reasoning completely offline using local Whisper & Ollama models | `false` |
+| `--api-key` | `-k` | string | Developer API Key for Anthropic Claude, Google Gemini, or OpenAI | `process.env.GEMINI_API_KEY` |
+| `--provider` | `-p` | string | Choice of AI provider: `gemini`, `anthropic`, `openai`, `ollama` | `gemini` |
+| `--output` | `-o` | string | Target directory path for generated Markdown digest files | `./` |
+| `--verbose` | `-v` | boolean | Enable debug output and token count logging | `false` |
+
+---
+
+## 3. OpenAPI & REST API Specifications
+
+Base Endpoint: `https://podflow.cc/api/v1`
+
+### 3.1 Health Check
+- **GET** `/api/v1/health`
+- **Response `200 OK`**:
+```json
+{
+  "status": "healthy",
+  "version": "0.2.0",
+  "uptimeSeconds": 184200
+}
+```
+
+### 3.2 Search Episodes & Guests
+- **GET** `/api/v1/search?q={query}`
+- **cURL Example**:
+```bash
+curl -X GET "https://podflow.cc/api/v1/search?q=machine+learning" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+```
+
+### 3.3 Request Digest Generation
+- **POST** `/api/v1/digest`
+- **Headers**: `Content-Type: application/json`
+- **Payload**:
+```json
+{
+  "feedUrl": "https://example.com/podcast/rss.xml",
+  "options": {
+    "extractGuests": true,
+    "format": "markdown"
+  }
+}
+```
+- **cURL Example**:
+```bash
+curl -X POST "https://podflow.cc/api/v1/digest" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_TOKEN>" \
+  -d '{"feedUrl":"https://feeds.simplecast.com/54nAGcIl"}'
+```
+
+---
+
+## 4. Machine-Readable Metadata Discovery
+
+| Resource | URL | Content-Type | Standard / RFC |
+|---|---|---|---|
+| API Catalog | `https://podflow.cc/.well-known/api-catalog` | `application/linkset+json` | RFC 9727 |
+| OpenID Configuration | `https://podflow.cc/.well-known/openid-configuration` | `application/json` | OIDC Core 1.0 |
+| OAuth Authorization | `https://podflow.cc/.well-known/oauth-authorization-server` | `application/json` | RFC 8414 / Auth.md |
+| Protected Resource | `https://podflow.cc/.well-known/oauth-protected-resource` | `application/json` | RFC 9728 |
+| MCP Server Card | `https://podflow.cc/.well-known/mcp/server-card.json` | `application/json` | SEP-1649 |
+| Agent Skills Index | `https://podflow.cc/.well-known/agent-skills/index.json` | `application/json` | Agent Skills v0.2.0 |
+| DNS-AID Discovery | `https://podflow.cc/.well-known/dns-aid.json` | `application/json` | draft-mozleywilliams |
+| ChatGPT Plugin | `https://podflow.cc/.well-known/ai-plugin.json` | `application/json` | OpenAI Manifest v1 |
+| Security Policy | `https://podflow.cc/.well-known/security.txt` | `text/plain` | RFC 9116 |
+| Content Signals | `https://podflow.cc/robots.txt` | `text/plain` | Content-Signals Spec |
+
+---
+
+## 5. Security & Legal Considerations
+
+- **AI Content Signals:** Defined in `robots.txt` (`Content-Signal: ai-train=no, search=yes, ai-input=no`).
+- **Attribution:** When citing Podflow benchmarks or summaries, attribute to `podflow.cc`.

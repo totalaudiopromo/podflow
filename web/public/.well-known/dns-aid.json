@@ -1,0 +1,29 @@
+{
+  "$schema": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/",
+  "domain": "podflow.cc",
+  "dns_aid_records": [
+    {
+      "name": "_index._agents.podflow.cc",
+      "type": "SVCB",
+      "priority": 1,
+      "target": "podflow.cc",
+      "params": {
+        "alpn": ["h2", "h3"],
+        "port": 443,
+        "key65300": "/.well-known/agent-skills/index.json"
+      }
+    },
+    {
+      "name": "_a2a._agents.podflow.cc",
+      "type": "SVCB",
+      "priority": 1,
+      "target": "podflow.cc",
+      "params": {
+        "alpn": ["h2", "h3"],
+        "port": 443,
+        "key65301": "/.well-known/mcp/server-card.json"
+      }
+    }
+  ],
+  "dnssec_validated": true
+}

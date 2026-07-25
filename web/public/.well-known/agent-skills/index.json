@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agentskills.io/schemas/v0.2.0/index.json",
+  "version": "0.2.0",
+  "skills": [
+    {
+      "name": "podcast-library-miner",
+      "type": "tool",
+      "description": "Extract guest profiles, ideas, and takeaways from macOS Apple Podcasts SQLite library or public RSS feeds using Podflow.",
+      "url": "https://podflow.cc/.well-known/agent-skills/podcast-library-miner/SKILL.md",
+      "sha256": "339710c4185fd77b4ecd6d04dc88bc5feb9f0e711b50ecd4ca457bce5dd6b169"
+    },
+    {
+      "name": "podcast-summarizer",
+      "type": "service",
+      "description": "Generate structured AI summaries, transcripts, and speaker diarization from audio feeds.",
+      "url": "https://podflow.cc/.well-known/agent-skills/podcast-summarizer/SKILL.md",
+      "sha256": "d636c8e577197d028b8abb7d66a1450af7c180fd13b752a7c5cb54e5d7fd8211"
+    }
+  ]
+}

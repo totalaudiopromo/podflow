@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Podflow Podcast Intelligence",
+  "name_for_model": "podflow",
+  "description_for_human": "Extract guest profiles, ideas, and insights from Apple Podcasts libraries and RSS feeds.",
+  "description_for_model": "Plugin for searching podcast feeds, mining guest bios, extracting key takeaways, and interacting with Podflow podcast intelligence APIs.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://podflow.cc/api/openapi.json"
+  },
+  "logo_url": "https://podflow.cc/favicon.svg",
+  "contact_email": "contact@totalaudiopromo.com",
+  "legal_info_url": "https://podflow.cc/ai.txt"
+}

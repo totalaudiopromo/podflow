@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-01/server-card.json",
+  "serverInfo": {
+    "name": "podflow-mcp",
+    "title": "Podflow Podcast Intelligence MCP Server",
+    "version": "0.2.0",
+    "description": "Extract guest profiles, core ideas, and key insights from Apple Podcasts libraries and public RSS feeds."
+  },
+  "transport": {
+    "type": "sse",
+    "endpoint": "https://podflow.cc/api/mcp/sse"
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": true,
+    "logging": true
+  }
+}

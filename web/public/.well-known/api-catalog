@@ -1,0 +1,25 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://podflow.cc/api/v1",
+      "service-desc": [
+        {
+          "href": "https://podflow.cc/api/openapi.json",
+          "type": "application/vnd.oai.openapi+json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://podflow.cc/how-it-works",
+          "type": "text/html"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://podflow.cc/api/v1/health",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

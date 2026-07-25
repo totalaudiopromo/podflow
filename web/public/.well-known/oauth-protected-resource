@@ -1,0 +1,16 @@
+{
+  "resource": "https://podflow.cc",
+  "authorization_servers": [
+    "https://podflow.cc"
+  ],
+  "scopes_supported": [
+    "podflow:read",
+    "podflow:write",
+    "podflow:digest",
+    "podflow:mcp"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_documentation": "https://podflow.cc/how-it-works"
+}

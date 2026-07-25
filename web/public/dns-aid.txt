@@ -1,0 +1,5 @@
+; DNS for AI Discovery (DNS-AID) Zone Export for podflow.cc
+; RFC 9460 SVCB / HTTPS ServiceMode Records for Agent Discovery
+
+_index._agents.podflow.cc. 3600 IN SVCB 1 podflow.cc. ( alpn="h2,h3" port="443" key65300="/.well-known/agent-skills/index.json" )
+_a2a._agents.podflow.cc.   3600 IN SVCB 1 podflow.cc. ( alpn="h2,h3" port="443" key65301="/.well-known/mcp/server-card.json" )
